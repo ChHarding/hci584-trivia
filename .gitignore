@@ -193,5 +193,10 @@ cython_debug/
 .cursorignore
 .cursorindexingignore
 
-#Mac specific
+# Mac specific
 .DS_Store
+
+# Project organizational file
+/_old
+/_tmp
+/tmp
