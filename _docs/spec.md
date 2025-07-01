@@ -1,4 +1,32 @@
-# **Multi-Player Trivia Game**
+
+# **Single Trivia Game**
+
+## **Light Specifications—Revision 2—Updated June 30, 2025**
+
+# **Description**
+
+_This is an update to the previously submitted spec, which simplifies the planned app to a single-player, self-serve game, with questions imported via API. The previous, now-deprecated original spec is noted below for reference._
+
+This project is a browser-based web application that allows users to play a self-serve, multiple-choice trivia game. It uses Flask as the web framework and the Open Trivia Database (https://opentdb.com/api_config.php) API as the question engine. The app automatically calculates the user’s score.
+
+The game app flow is as follows:
+
+1. User visits the app homepage →
+2. User selects option to start game →
+3. App presents first question →
+4. Player uses radio button to select answer →
+5. User selects submit button to confirm answer →
+6. App displays message indicating whether their answer was correct →
+7. Repeat steps 3–6 until user completes all questions →
+8. App displays user’s final score →
+9. User chooses to play again or exit
+
+
+___
+
+
+# **DEPRECATED** 
+## **Multi-Player Trivia Game**
 
 ## **Light Specifications—June 2025**
 

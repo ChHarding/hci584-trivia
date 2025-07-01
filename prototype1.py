@@ -1,136 +1,74 @@
 
 # 
-# IMPORTS -- delete documentation links prior to live implementation
+# IMPORTS
 #
 
-from flask import Flask, render_template, request, redirect, url_for
-from flask_sqlalchemy import SQLAlchemy
-from flask_login import LoginManager, UserMixin, login_user, logout_user, login_required, current_user 
-from flask_wtf import FlaskForm
-from flask_socketio import SocketIO, emit, join_room, leave_room 
-    ###  documentation: https://flask.palletsprojects.com/en/stable/
-
-from jinja2 import Template
-    ###  documentation: https://jinja.palletsprojects.com/en/stable/
+from flask import Flask, render_template, request, redirect, url_for, session, flash 
+import html
+import random  
+import sys
+import requests
   
-import os # for phase 2 upgrade from sqlite (initial prototype) to PostgreSQL (needed for 10+ simultaeous players)
-import json
-from datetime import datetime 
-from random import randint
-
 
 # 
 # APP SET UP
 #
+""" Standard code to make the app work"""
 
 app = Flask(__name__)
 
+app_secret_key = placeholder-secret-key-for-version1_hci584-june-2025
+
+
+
+# 
+# GAME FUNCTIONS
+#
+""" Includes all of the functions that control the game"""
+
 # TODO #
 
+# set up dictionary for game data
+# get questions from API >> https://opentdb.com/api_config.php
+##      for phase 2, may allow user to choose between question types - topic or difficulty - 
+##      thus needing separate possible API configs
+# check each answer against API data during game play
+# give countdown of how many questions are left
+
+
+# 
+# FLASK FUNCTIONS
+#
+""" Includes all the Flask routes and basic HTML - will update with separate HTML/CSS/JS files as needed 
+    in phase 2 once the basic app structure is built and tested"""
+
+# TODO #
+
+# homepage
+##  user selects to play game
+##  app starts game play
+# question/answer - uses same basic template for each question/answer
+##  question is asked; user inputs answer
+##  app displays answer result and correct/incorrect user message
+##  app moves to next question
+# final result page with option to start new game or exit
 
 
 #
-# DATABASE TABLES
+# TESTING AND DEBUGGING
 #
+""" Includes any code necessary for testing to ensure game works; will be commented out prior to actual implementation"""
 
-#Admin # TODO #
-""" This class is for the Game Administrator account type. This is a persistant account type that can log in 
-    with their email and password. It will include:
-    - Unique user ID (auto-generated random integer)
-    - User's first name
-    - User's last name
-    - Email
-    - Password for logging in (hash protected?)
-    - Date the user's account was created
-    - Date the user last logged in
-    
-    **Needs to link to all of their games
-"""
+# TODO #
 
-#Player # TODO #
-"""This class is for the Player account type. This is a temporary account type that is only used for a single game.
-    It will include:
-    - Username (unique within the game they are playing)
-    - Email 
-    - When the joined the game
-    - Which question they are on
-    - Their current score
-    
-    **Needs to link to the associated game and the answers they submitted**
-"""
+# TBD as game is developed
 
-#Game # TODO #
-"""This class is for the actual game itself—-a single game instance. It will include:
-    - The game "owner" aka the associated Game Admin account 
-    - Unique game ID (uses associated admin account ID as base)
-    - Game title
-    - Game description
-    - Unique URL slug
-    - API settings TBD
-    - Game status (i.e., draft, active, completed) 
-    - When game was created
-    - When game started
-    - When the game ended
-    - Which question is currently being shown 
-    - All the questions fetched from the API 
 
-    **Needs to generate unique URL slug from the title (determines the link users will visit to play game),
-    get the current question being shown via API, and link to all player and admin accounts**
-"""
-
-#Submissions # TODO #
-"""This class handles all of the answer submissions: one player's answer to one question. 
-    It will include:
-    - The player submitting the answer 
-    - The game it's for
-    - The question number 
-    - The answer the player selected 
-    - The correct answer 
-    - Whether they got it right (True/False)
-    - Timestamp for when it was submitted 
-    
-    **Needs to link to associated player and game. Must ensure players can only submit a 
-    single answer and cannot change it once submitted (submitting no answer by the time question closes 
-    qualifies as answer).**
-"""
-
+# 
+# RUN APP
 #
-# FORMS
-#
+""" Includes final code to make this bad boy run"""
 
-#NewAccountForm # TODO #
-""" Form to register for a new admin user account. Includes:
-    - Field: First Name (required)
-    - Field: Last Name (required)
-    - Field: Email (required - must be in acceptable format) 
-    - Field: Password (required - must be in acceptable format) 
-    - Field: Confirm Password (required - must match first password submission exactly) 
-    - Button: Create Account 
-"""
+# TODO #
 
-#LogInForm # TODO #
-""" Form that allows registered admin users to log into the app. Includes:
-    - Field: Email (required) 
-    - Field: Password (required) 
-    - Button: Log In 
-"""
-
-#PlayerJoinForm # TODO #
-""" Form that allows player to join a game. Includes:
-    - Field: username (required) 
-    - Field: Email (optional) 
-    - Button: Join Game 
-"""
-
-#CreateGameForm # TODO #
-""" Form for creating a new game. Fields for this are TBD now that I'm switching to using the Q/A API, but may include:
-    - Field: Game Name (required) 
-    - Field: Game Description (optional) 
-    - Field: Game Date and Time (optional - text field for user messaging only, doesn't control game play)
-    - Other fields TBD based on API
-    - Button: Create Game
-""" 
-
-
-
-
+# execute game play when user selects to play game
