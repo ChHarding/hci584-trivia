@@ -13,5 +13,62 @@ import requests
 # 
 # APP SET UP
 #
+""" Standard code to make the app work"""
 
 app = Flask(__name__)
+
+app_secret_key = placeholder-secret-key-for-version1_hci584-june-2025
+
+
+
+# 
+# GAME FUNCTIONS
+#
+""" Includes all of the functions that control the game"""
+
+# TODO #
+
+# set up dictionary for game data
+# get questions from API >> https://opentdb.com/api_config.php
+##      for phase 2, may allow user to choose between question types - topic or difficulty - 
+##      thus needing separate possible API configs
+# check each answer against API data during game play
+# give countdown of how many questions are left
+
+
+# 
+# FLASK FUNCTIONS
+#
+""" Includes all the Flask routes and basic HTML - will update with separate HTML/CSS/JS files as needed 
+    in phase 2 once the basic app structure is built and tested"""
+
+# TODO #
+
+# homepage
+##  user selects to play game
+##  app starts game play
+# question/answer - uses same basic template for each question/answer
+##  question is asked; user inputs answer
+##  app displays answer result and correct/incorrect user message
+##  app moves to next question
+# final result page with option to start new game or exit
+
+
+#
+# TESTING AND DEBUGGING
+#
+""" Includes any code necessary for testing to ensure game works; will be commented out prior to actual implementation"""
+
+# TODO #
+
+# TBD as game is developed
+
+
+# 
+# RUN APP
+#
+""" Includes final code to make this bad boy run"""
+
+# TODO #
+
+# execute game play when user selects to play game
