@@ -22,7 +22,7 @@ app_secret_key = placeholder-secret-key-for-version1_hci584-june-2025
 
 
 # 
-# GAME FUNCTIONS
+# GAME ENGINE FUNCTIONS
 #
 """ Includes all of the functions that control the game"""
 
@@ -34,6 +34,28 @@ app_secret_key = placeholder-secret-key-for-version1_hci584-june-2025
 ##      thus needing separate possible API configs
 # check each answer against API data during game play
 # give countdown of how many questions are left
+
+# USER JOURNEY STEP 2 (BACKGROUND): GET QUESTIONS FROM OPEN TRIVIA DATABASE
+def get_questions(amount=13):
+    """ This function calls the Open Trivia Database (https://opentdb.com) API to retrieve the trivia 
+    questions and converts it into json format. Each game has a baker's dozen (13) general knowledge, 
+    multiple choice questions. If the app encounters an error loading the questions, gives user an 
+    error message to try restarting the game (error message listed in Flask functions for user journey step 2).
+    """
+    url = f"https://opentdb.com/api.php?amount=13&category=23&difficulty=medium&type=multiple"
+    try:
+        response = requests.get(url)
+        data = response.json()
+        if data['response_code'] == 0:
+            return data['results']
+        else:
+            return None
+    except:
+        pass
+    
+    return None
+
+
 
 
 # 
@@ -53,7 +75,7 @@ app_secret_key = placeholder-secret-key-for-version1_hci584-june-2025
 ##      app moves to next question
 # final result page with option to start new game or exit
 
-# USER JOURNEY STEP 1: VISITE HOMEPAGE, LAUNCH GAME
+# USER JOURNEY STEP 1: VISIT HOMEPAGE, LAUNCH GAME
 @app.route('/')
 def home():
     """ This function is for the very first step of the user journey:
