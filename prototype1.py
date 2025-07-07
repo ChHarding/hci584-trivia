@@ -71,7 +71,14 @@ def clean_up_questions(all_raw_questions):
     """ This function takes the raw data from the API and makes it presentable for human game play. This includes
     updating HTML character codes so they are readable by humans (e.g., changing &#039; to ' or &quot; to ") and 
     and randomizing the answer order so that the correct answer is not always in the same list location. Returns
-    the cleaned up questions, the cleaned up answer, and the location of the correct answer for ALL questions. """
+    the cleaned up questions, the cleaned up answer, and the location of the correct answer for ALL questions. 
+        
+    Arguments:
+    - all_raw_questions: questions retrieved from API via get_questions
+    
+    Returns:
+    - dictionary of cleaned question and answer data
+    """
     
     if not all_raw_questions:
         return None
