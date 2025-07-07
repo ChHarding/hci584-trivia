@@ -134,7 +134,8 @@ def check_answer(user_answer_index, questions):
 
 def update_total_score(current_score, user_correct):
     """ This function updates the user's running total score for the game thus far based on whether their
-    answer to the previous question was correct or incorrect.
+    answer to the previous question was correct or incorrect. It uses the check_answer function to determine
+    if the user had a correct (True) answer or incorrect (False) answer.
     
     Arguments:
     - current_score: the user's current score (i.e., prior to the question just answered)
@@ -144,7 +145,7 @@ def update_total_score(current_score, user_correct):
     - updated score (current_score + 1 if correct, no change if incorrect)
     """
 
-    if user_correct:
+    if user_correct == True:
         return current_score + 1
     else:
         return current_score
