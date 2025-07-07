@@ -110,19 +110,19 @@ def clean_up_questions(all_raw_questions):
 
 # USER JOURNEY STEP 2.3 (BACKGROUND): CHECK IF SUBMITTED ANSWER IS CORRECT
 
-def check_answer(user_answer_index, question_data):
+def check_answer(user_answer_index, questions):
     """ This function checks if the answer the user submitted matches the correct answer from the API data.
     
     Arguments:
     - user_answer_index: the index of the answer the user selected (0-3)
-    - question_data: dictionary containing question info including correct_index
+    - questions: dictionary containing question info including correct_index
     
     Returns:
     - True if answer's answer matches the correct answer index
     - False if it does not match the correct answer
     """
     
-    correct_index = question_data['correct_index']
+    correct_index = questions['correct_index']
 
     if user_answer_index == correct_index:
         return True
