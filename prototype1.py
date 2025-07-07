@@ -334,7 +334,34 @@ def answer():
     </html>
     """
 
+@app.route('/results')
+def results():
+    score = session.get('score', 0)
+    score_percentage = round(score / 13 * 100)
 
+    if score == 13:
+        final_score_message = f"Daaaaaaamn... you sure are smart!"
+    elif 13 > score >= 10:
+        final_score_message = f"OK, we'll admit it: You are pretty smart. This time."
+    elif 10 > score >= 5:
+        final_score_message = f"Meh. You could've done better. Of course, you could have done worse. Consider yourself solidly average."
+    else:
+        final_score_message = f"Smart? Sorry, not this time. Perhaps trivia isn't your game?"
+    
+    return f"""
+    <html>
+    <head>
+        <title>Hello, Smarty Pants: The proof is in the final score.</title>
+    </head>
+    <body>
+        <h1>That's it. It's game over. Are you a truly a Smarty Pants?</h1>
+        <h2>You answered a total of <srong>{score}</strong> questions correctly
+        <br>for a final score of <strong>{score_percentage}%</strong></h2>
+        <p>{final_score_message}</p>
+        <p>Think you can do better the next time around? What not <a href="/">try again</a> now?</p>
+    </body>
+    </html>
+    """    
 
 
 
