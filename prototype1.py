@@ -288,10 +288,12 @@ def show_question():
 
 @app.route('/answer', methods=['POST'])
 def answer():
-    #TODO#
-    """ This route processes the user's selected answer from the form on '/quetion' using the check_answer game 
+    """ This function processes the user's selected answer from the form on '/quetion' using the check_answer game 
         logic function. It then displays a user message based on results and automatically redirects the user to
-        the next question."""
+        the next question.
+        
+        Returns:
+        - '/answer', an intermediary page with a user message that redirects to the next question after 3 seconds"""
     
     # user answer from '/question'
     user_answer = int(request.form.get('answer', -1))
@@ -336,6 +338,13 @@ def answer():
 
 @app.route('/results')
 def results():
+        """ This function displays the final score at the end of the game. Both the raw (number of questions 
+            answered coreectly) and the percentage (answered correctly out of the total number of questions) is show. 
+            Also shows a final message based on the number of questions the user got correct. User has the option to 
+            return to the homepage and start a new game.
+        
+            Returns:
+            - '/results' page at the end of the game."""
     score = session.get('score', 0)
     score_percentage = round(score / 13 * 100)
 
