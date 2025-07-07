@@ -311,7 +311,7 @@ def answer():
     # AI disclousure: used Claude Sonnet 4 to help with setting up automatic redirects
     if result['game_over']:
         next_url = '/results'
-        redirect_message = "That's it... Let's see your final score!"
+        redirect_message = "That's it! Let's see your final score..."
     else:
         next_url = '/question'
         redirect_message = "Let's try a new question..."
