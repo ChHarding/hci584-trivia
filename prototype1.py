@@ -24,16 +24,10 @@ app.secret_key = "placeholder-secret-key-for-version1_hci584-june-2025"
 # 
 # GAME ENGINE FUNCTIONS
 #
-""" Includes all of the functions that control the game"""
+""" Includes all of the functions that control the game
 
-# TODO #
+    AI disclosure: Used Claude Sonnet 4 for troubleshooting and debugging. """
 
-# set up dictionary for game data
-# get questions from API >> https://opentdb.com/api_config.php
-##      for phase 2, may allow user to choose between question types - topic or difficulty - 
-##      thus needing separate possible API configs
-# check each answer against API data during game play
-# give countdown of how many questions are left
 
 # USER JOURNEY STEP 2.1 (BACKGROUND): GET QUESTIONS FROM OPEN TRIVIA DATABASE
 def get_questions():
@@ -150,10 +144,24 @@ def update_total_score(current_score, user_correct):
     else:
         return current_score
 
+# USER JOURNEY STEP 2.5 (BACKGROUND): USER FEEDBACK AFTER SUBMITTING ANSWER
+##  in phase 2, may update this to display to currect answer as part of the message rather than a simple right/wrong message
 
+def user_feedback(result):
+    """ This function provides a user feedback message after the user has answered a question, alerting them 
+    whether they were correct or incorrect.
+    
+    Arguments:
+    - result from check_answer (True/False)
+    
+    Returns:
+    - User messaging indicating whether the answer was correct or incorrect
+    """
 
-
-
+    if result == True:
+        return f"Woohoo! You are smart (and you've got the correct answers to prove it)."
+    else:
+        return f"Smart? Not on this question. Your answer was wrong."
 
 
 
@@ -163,7 +171,10 @@ def update_total_score(current_score, user_correct):
 # FLASK FUNCTIONS
 #
 """ Includes all the Flask routes and basic HTML - will update with separate HTML/CSS/JS files as needed 
-    in phase 2 once the basic app structure is built and tested"""
+    in phase 2 once the basic app structure is built and tested
+    
+    AI disclosure: Used Claude Sonnet 4 to generate HTML and JavaScript for Flask routes, as well as for 
+    troubleshooting and debugging."""
 
 # TODO #
 
@@ -273,7 +284,61 @@ def show_question():
     </body>
     </html>"""
 
-# USER JOURNEY STEP 2: VIEW CORRECT ANSWER AND MOVE ONTO NEXT QUESTION
+# USER JOURNEY STEP 2: PROCESS ANSWER, SEE IF ANSWER WAS CORRECT
+
+@app.route('/answer', methods=['POST'])
+def answer():
+    #TODO#
+    """ This route processes the user's selected answer from the form on '/quetion' using the check_answer game 
+        logic function. It then displays a user message based on results and automatically redirects the user to
+        the next question."""
+    
+    # user answer from '/question'
+    user_answer = int(request.form.get('answer', -1))
+    
+    # the game state based on the current session
+    current_num = session.get('current_question', 0)
+    questions = session.get('questions', [])
+    score = session.get('score', 0)
+    
+    # use game logic to check whether user's answer was correct
+    result = check_answer(user_answer, current_num, questions, score)
+    
+    # update session 
+    session['score'] = result['new_score']
+    session['current_question'] = result['new_question_num']
+    
+    # AI disclousure: used Claude Sonnet 4 to help with setting up automatic redirects
+    if result['game_over']:
+        next_url = '/results'
+        redirect_message = "That's it... Let's see your final score!"
+    else:
+        next_url = '/question'
+        redirect_message = "Let's try a new question..."
+    
+    return f"""
+    <html>
+    <head>
+        <title>Hello, Smarty Pants: Were you right? Or downright wrong?</title>
+        <script>
+            setTimeout(function() {{
+                window.location.href = '{next_url}';
+            }}, 3000);
+        </script>
+    </head>
+    <body>
+        <h2>{result['user_feedback']}</h2>
+        <p>Current Score: {result['new_score']}/{result['new_question_num']}</p>
+        <p><em>{redirect_message}</em></p>
+    </body>
+    </html>
+    """
+
+
+
+
+
+
 
 
 
