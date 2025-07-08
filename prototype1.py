@@ -328,13 +328,30 @@ def answer():
     current_num = session.get('current_question', 0)
     questions = session.get('questions', [])
     score = session.get('score', 0)
+
+    # if there are no more questions, redirects to '/results' page instead of the question page
+    if current_num >= len(questions):
+        return redirect(url_for('results'))
     
-    # use game engine function check_answer to check whether user's answer was correct
-    result = check_answer(user_answer, current_num, questions, score)
+    # gets info about the current question (based on question number)
+    current_question_data = questions[current_num]
+
+    # determine if user's answer is current question correct
+    is_correct = check_answer(user_answer, current_question_data)
+
+    # updates score
+    new_score = update_total_score(score, is_correct)
+
+    # grabs associated user feedback message
+    feedback_message = user_feedback(is_correct)
+    
+    # calculate next question number; if there are no more questions, the game is over 
+    next_question_num = current_num + 1
+    game_over = (next_question_num >= len(questions))
     
     # save user progress
-    session['score'] = result['new_score']
-    session['current_question'] = result['new_question_num']
+    new_score = session['score']
+    new_question_num = session['current_question']
     
     # auto-redirect to the correct next pages based on whether there are more questions left for the curret session 
     # AI disclousure: used Claude Sonnet 4 to help with setting up automatic redirects
@@ -356,8 +373,8 @@ def answer():
         </script>
     </head>
     <body>
-        <h2>{result['user_feedback']}</h2>
-        <p>Current Score: {result['new_score']}/{result['new_question_num']}</p>
+        <h2>{feedback_message}</h2>
+        <p>Current Score: {new_score}/{new_question_num}</p>
         <p><em>{redirect_message}</em></p>
     </body>
     </html>
