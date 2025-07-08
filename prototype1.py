@@ -24,12 +24,12 @@ app.secret_key = "placeholder-secret-key-for-version1_hci584-june-2025"
 # 
 # GAME ENGINE FUNCTIONS
 #
-""" Includes all of the functions that control the game
-
+""" Includes all of the functions that control the game.
     AI disclosure: Used Claude Sonnet 4 for troubleshooting and debugging. """
 
 
 # USER JOURNEY STEP 2.1 (BACKGROUND): GET QUESTIONS FROM OPEN TRIVIA DATABASE
+
 def get_questions():
     """ This function calls the Open Trivia Database (https://opentdb.com/api_config.php) API to retrieve the trivia 
     questions and converts it into json format. Each game has a baker's dozen (13) of multiple choice questions. 
@@ -48,6 +48,7 @@ def get_questions():
 
     No arguments
     """
+
     url = f"https://opentdb.com/api.php?amount=13&category=23&difficulty=medium&type=multiple"
     try:
         response = requests.get(url)
@@ -61,6 +62,7 @@ def get_questions():
 
 
 # USER JOURNEY STEP 2.2 (BACKGROUND): CLEAN QUESTION AND ANSWER DATA FROM API
+
 def clean_up_questions(all_raw_questions):
     """ This function takes the raw data from the API and makes it presentable for human game play. This includes
     updating HTML character codes so they are readable by humans (e.g., changing &#039; to ' or &quot; to ") and 
@@ -71,27 +73,39 @@ def clean_up_questions(all_raw_questions):
     - all_raw_questions: questions retrieved from API via get_questions
     
     Returns:
-    - dictionary of cleaned question and answer data
+    - list of cleaned question and answer data
     """
     
+    # if the function get_questions does pull in any questions, stops the function as there's no data to clean up
     if not all_raw_questions:
         return None
     
+    # create list to hold all the cleaned-up question data
     questions = []
     
     for question_details in all_raw_questions:
+        
+        # first, cleans up special HTML characters and makes the questions human readable
         question = html.unescape(question_details['question'])
         
+        # creates a combined list to all answers by pulling together all correct and incorrect answers
         raw_answers = [question_details['correct_answer']] + question_details['incorrect_answers']
+        
+        # create list to hold all the cleaned-up answer data for a each question
         answers = []
+
+        # for each of the answer options, clean up special HTML characters
         for a in raw_answers:
             cleaned_answers = html.unescape(a)
             answers.append(cleaned_answers)
         cleaned_correct_answer = html.unescape(question_details['correct_answer'])
         
+        # random shuffle all the cleaned-up answer options so the correct answers are not predictable, then make
+        #  a note of the index for the correct answer for that specific question so it can be used to grade user results
         random.shuffle(answers)
         correct_index = answers.index(cleaned_correct_answer)
         
+        # documents final cleaned-up questions, saves question, answers, and correct index fields to questions list
         cleaned_question = {
             'question': question,
             'answers': answers,
@@ -109,15 +123,17 @@ def check_answer(user_answer_index, questions):
     
     Arguments:
     - user_answer_index: the index of the answer the user selected (0-3)
-    - questions: dictionary containing question info including correct_index
+    - questions: list containing question info including correct_index
     
     Returns:
     - True if answer's answer matches the correct answer index
     - False if it does not match the correct answer
     """
     
+    # identity the index for correct answer to the current question
     correct_index = questions['correct_index']
 
+    # use index to determine if user's answer is right or wrong
     if user_answer_index == correct_index:
         return True
     else:
@@ -139,6 +155,7 @@ def update_total_score(current_score, user_correct):
     - updated score (current_score + 1 if correct, no change if incorrect)
     """
 
+    # uses check_answer and current score to determine new score
     if user_correct == True:
         return current_score + 1
     else:
@@ -158,14 +175,11 @@ def user_feedback(result):
     - User messaging indicating whether the answer was correct or incorrect
     """
 
+    # uses check_answer to determine if user gets a correct vs. incorrect temporary feedback message 
     if result == True:
         return f"Woohoo! You are smart (and you've got the correct answers to prove it)."
     else:
         return f"Smart? Not on this question. Your answer was wrong."
-
-
-
-
 
 # 
 # FLASK FUNCTIONS
@@ -176,19 +190,18 @@ def user_feedback(result):
     AI disclosure: Used Claude Sonnet 4 to generate HTML and JavaScript for Flask routes, as well as for 
     troubleshooting and debugging."""
 
-# TODO #
-
-# question/answer - uses same basic template for each question/answer
-##      app displays answer result and correct/incorrect user message
-##      app moves to next question
-# final result page with option to start new game or exit
 
 # USER JOURNEY STEP 1: VISIT HOMEPAGE, LAUNCH GAME
 @app.route('/')
 def home():
     """ This function is for the very first step of the user journey:
         - user visits homepage, sees welcome message/instructions
-        - user selets button to launch game"""
+        - user selets button to launch game
+        
+        Returns:
+        - App '/' homepage
+        """
+    
     return """
     <html>
     <head>
@@ -210,17 +223,23 @@ def home():
 
 @app.route('/start')
 def start():
-    """ This function launches the actual game after user input on homepage. After a 5 second welcome message, it redirects 
-        to the '/question' view to show the first question."""
+    # possible phase 2 augmentation: show dynamic countdown clock
+    """ This function launches the actual game after user input on homepage.
+        
+        Returns:
+        - Game '/start' sequence
+        - First question '/question' page (delayed autodirect)
+        """
 
+    # runs first two game engine functions to pull questions from the API and get them cleaned and ready to display
     raw_questions = get_questions()
     questions = clean_up_questions(raw_questions)
 
+    # initializes the game session using the pulled questions
     session['questions'] = questions
     session['current_question'] = 0
     session['score'] = 0
     
-    #TODO#
     return """
     <html>
     <head>
@@ -228,7 +247,7 @@ def start():
         <script>
             setTimeout(function() {
                 window.location.href = '/question';
-            }, 5000);
+            }, 3000);
         </script>
     </head>
     <body>
@@ -240,22 +259,31 @@ def start():
     """
 
 # USER JOURNEY STEP 2: VIEW QUESTION AND SELECT/SUBMIT ANSWER
-#TODO#
+
 @app.route('/question')
 def show_question():
     """ This function shows the cleaned up questions and available answer options to the user. In addition, the user 
         can see which question they are on (i.e., Question X of Y). The user selects an answer from a 
         list of radio buttons. The answer is automatically submitted once a radio button is active; there 
-        is no separate submit button."""
+        is no separate submit button.
+        
+        Returns:
+        - Main game play '/questions' page
+        """
     
+    # establishes the number of current question and the question data for the current game session  
     current_num = session.get('current_question', 0)
     questions = session.get('questions', [])
 
+    # Displays special message if there are no more questions to answer
     if current_num >= len(questions):
         return "That's it. You're answered them all. There're no more questions. Zip, Zero. Zilch. Nada. "
 
+    # Pulls the data for the current question number so it can be displayed on the page
     question_data = questions[current_num]
 
+    # Create radio buttons for each answer option
+    # AI disclosure: Used Claude Sonnet 4 to create the following block for the radio buttons
     radio_buttons = ""
     for i, answer in enumerate(question_data['answers']):
         radio_buttons += (
@@ -284,8 +312,6 @@ def show_question():
     </body>
     </html>"""
 
-# USER JOURNEY STEP 2: PROCESS ANSWER, SEE IF ANSWER WAS CORRECT
-
 @app.route('/answer', methods=['POST'])
 def answer():
     """ This function processes the user's selected answer from the form on '/quetion' using the check_answer game 
@@ -295,21 +321,22 @@ def answer():
         Returns:
         - '/answer', an intermediary page with a user message that redirects to the next question after 3 seconds"""
     
-    # user answer from '/question'
+    # user's answer based on radio button selected on '/question'
     user_answer = int(request.form.get('answer', -1))
     
-    # the game state based on the current session
+    # establishes the number of current question, the question data, and score for the current game session   
     current_num = session.get('current_question', 0)
     questions = session.get('questions', [])
     score = session.get('score', 0)
     
-    # use game logic to check whether user's answer was correct
+    # use game engine function check_answer to check whether user's answer was correct
     result = check_answer(user_answer, current_num, questions, score)
     
-    # update session 
+    # save user progress
     session['score'] = result['new_score']
     session['current_question'] = result['new_question_num']
     
+    # auto-redirect to the correct next pages based on whether there are more questions left for the curret session 
     # AI disclousure: used Claude Sonnet 4 to help with setting up automatic redirects
     if result['game_over']:
         next_url = '/results'
@@ -336,18 +363,23 @@ def answer():
     </html>
     """
 
+# USER JOURNEY STEP 3: SEE FINAL RESULTS AT END OF GAME
+
 @app.route('/results')
 def results():
-        """ This function displays the final score at the end of the game. Both the raw (number of questions 
-            answered coreectly) and the percentage (answered correctly out of the total number of questions) is show. 
-            Also shows a final message based on the number of questions the user got correct. User has the option to 
-            return to the homepage and start a new game.
-        
-            Returns:
-            - '/results' page at the end of the game."""
+    """ This function displays the final score at the end of the game. Both the raw (number of questions 
+        answered coreectly) and the percentage (answered correctly out of the total number of questions) is show. 
+        Also shows a final message based on the number of questions the user got correct. User has the option to 
+        return to the homepage and start a new game.
+    
+        Returns:
+        - '/results' page at the end of the game."""
+    
+    # get the final number of correct answers and use that to calculate a percent-based final score
     score = session.get('score', 0)
     score_percentage = round(score / 13 * 100)
 
+    # final user score message on results page is based on the number of answers the user guessed correctly
     if score == 13:
         final_score_message = f"Daaaaaaamn... you sure are smart!"
     elif 13 > score >= 10:
@@ -373,27 +405,13 @@ def results():
     """    
 
 
-
-
-
-
-
-#
-# TESTING AND DEBUGGING
-#
-""" Includes any code necessary for testing to ensure game works; will be commented out prior to actual implementation"""
-
-# TODO #
-
-# TBD as game is developed
-
-
 # 
 # RUN APP
 #
 """ Includes final code to make this bad boy run"""
 
-# execute game play when user selects to play game
-#if __name__ == "__main__":
-    #print("Starting app...")
-    #print("Local homepage for testing: http://127.0.0.1:5000") # for local hosting only; update once on Python anywhere
+# execute game play when user selects to play game using button on homepage
+# AI disclosure: used Claude Sonnet 4 for this as I couldn't figure it out
+if __name__ == "__main__":
+    print("Starting app...")
+    print("Local homepage for testing: http://127.0.0.1:5000") # for local hosting only; update once on Pythonanywhere
