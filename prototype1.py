@@ -3,14 +3,10 @@
 # IMPORTS
 #
 
-print("1. Starting imports...")
-
 from flask import Flask, render_template, request, redirect, url_for, session, flash 
 import html
 import random  
 import requests
-
-print("2. Imports successful...")  
 
 # 
 # APP SET UP
@@ -20,8 +16,6 @@ print("2. Imports successful...")
 app = Flask(__name__)
 app.secret_key = "placeholder-secret-key-for-version1_hci584-june-2025"
 
-print("3. Flask app created...")
-
 # 
 # GAME ENGINE FUNCTIONS
 #
@@ -30,8 +24,6 @@ print("3. Flask app created...")
 
 
 # USER JOURNEY STEP 2.1 (BACKGROUND): GET QUESTIONS FROM OPEN TRIVIA DATABASE
-
-print("4. About to define functions...")
 
 def get_questions():
     """ This function calls the Open Trivia Database (https://opentdb.com/api_config.php) API to retrieve the trivia 
@@ -193,8 +185,6 @@ def user_feedback(result):
     AI disclosure: Used Claude Sonnet 4 to generate HTML and JavaScript for Flask routes, as well as for 
     troubleshooting and debugging."""
 
-print("5. About to define routes...")
-
 # USER JOURNEY STEP 1: VISIT HOMEPAGE, LAUNCH GAME
 @app.route('/')
 def home():
@@ -238,6 +228,23 @@ def start():
     # runs first two game engine functions to pull questions from the API and get them cleaned and ready to display
     raw_questions = get_questions()
     questions = clean_up_questions(raw_questions)
+
+    # error handling
+    # AI disclosure: added this from Claude during troubleshooting
+    if not questions:
+        return """
+        <html>
+        <head>
+            <title>Hello, Smarty Pants: Oops!</title>
+        </head>
+        <body>
+            <h1>Uh oh! Something went wrong.</h1>
+            <p>We couldn't load the trivia questions right now. That's a bummer.</p>
+            <p>Try refreshing the page or come back in a few minutes,</p>
+            <a href="/"><button>Go Back</button></a>
+        </body>
+        </html>
+        """
 
     # initializes the game session using the pulled questions
     session["questions"] = questions
@@ -430,22 +437,8 @@ def results():
 #
 """ Includes final code to make this bad boy run"""
 
-# execute game play when user selects to play game using button on homepage
-# AI disclosure: used Claude Sonnet 4 for this as I couldn't figure it out
-#if __name__ == "__main__":
-    #print("Starting app...")
-    #print("Local homepage for testing: http://127.0.0.1:5000") # for local hosting only; update once on Pythonanywhere
-
-#if __name__ == "__main__":
-    #print("Starting simple test...")
-    #print("Go to: http://127.0.0.1:5000")
-    #app.run(debug=True)
-
-print("6. About to start app...")
 
 if __name__ == "__main__":
-    print("7. In main block...")
     print("Starting app...")
     print("Local homepage for testing: http://127.0.0.1:5000")
-    print("8. About to call app.run()...")
     app.run(debug=True)
