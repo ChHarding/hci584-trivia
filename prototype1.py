@@ -44,7 +44,7 @@ def get_questions():
     No arguments
     """
 
-    url = f"https://opentdb.com/api.php?amount=13&category=23&difficulty=medium&type=multiple"
+    url = f"https://opentdb.com/api.php?amount=13&category=9&difficulty=medium&type=multiple"
     try:
         response = requests.get(url)
         data = response.json()
