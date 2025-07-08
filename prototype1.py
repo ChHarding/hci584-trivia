@@ -52,8 +52,8 @@ def get_questions():
     try:
         response = requests.get(url)
         data = response.json()
-        if data['response_code'] == 0:
-            return data['results']
+        if data["response_code"] == 0:
+            return data["results"]
         else:
             return None
     except:    
@@ -85,10 +85,10 @@ def clean_up_questions(all_raw_questions):
     for question_details in all_raw_questions:
         
         # first, cleans up special HTML characters and makes the questions human readable
-        question = html.unescape(question_details['question'])
+        question = html.unescape(question_details["question"])
         
         # creates a combined list to all answers by pulling together all correct and incorrect answers
-        raw_answers = [question_details['correct_answer']] + question_details['incorrect_answers']
+        raw_answers = [question_details["correct_answer"]] + question_details["incorrect_answers"]
         
         # create list to hold all the cleaned-up answer data for a each question
         answers = []
@@ -97,7 +97,7 @@ def clean_up_questions(all_raw_questions):
         for a in raw_answers:
             cleaned_answers = html.unescape(a)
             answers.append(cleaned_answers)
-        cleaned_correct_answer = html.unescape(question_details['correct_answer'])
+        cleaned_correct_answer = html.unescape(question_details["correct_answer"])
         
         # random shuffle all the cleaned-up answer options so the correct answers are not predictable, then make
         #  a note of the index for the correct answer for that specific question so it can be used to grade user results
@@ -106,9 +106,9 @@ def clean_up_questions(all_raw_questions):
         
         # documents final cleaned-up questions, saves question, answers, and correct index fields to questions list
         cleaned_question = {
-            'question': question,
-            'answers': answers,
-            'correct_index': correct_index
+            "question": question,
+            "answers": answers,
+            "correct_index": correct_index
         }
         questions.append(cleaned_question)
     
@@ -130,7 +130,7 @@ def check_answer(user_answer_index, question_data):
     """
     
     # identity the index for correct answer to the current question
-    correct_index = question_data['correct_index']
+    correct_index = question_data["correct_index"]
 
     # use index to determine if user's answer is right or wrong
     if user_answer_index == correct_index:
@@ -235,9 +235,9 @@ def start():
     questions = clean_up_questions(raw_questions)
 
     # initializes the game session using the pulled questions
-    session['questions'] = questions
-    session['current_question'] = 0
-    session['score'] = 0
+    session["questions"] = questions
+    session["current_question"] = 0
+    session["score"] = 0
     
     return """
     <html>
@@ -271,8 +271,8 @@ def show_question():
         """
     
     # establishes the number of current question and the question data for the current game session  
-    current_num = session.get('current_question', 0)
-    questions = session.get('questions', [])
+    current_num = session.get("current_question", 0)
+    questions = session.get("questions", [])
 
     # Displays special message if there are no more questions to answer
     if current_num >= len(questions):
@@ -284,7 +284,7 @@ def show_question():
     # Create radio buttons for each answer option
     # AI disclosure: Used Claude Sonnet 4 to create the following block for the radio buttons
     radio_buttons = ""
-    for i, answer in enumerate(question_data['answers']):
+    for i, answer in enumerate(question_data["answers"]):
         radio_buttons += (
             f'<input type="radio" name="answer" value="{i}" '
             f'id="answer{i}" onchange="submitAnswer()">'
@@ -304,7 +304,7 @@ def show_question():
     </head>
     <body>
         <p>Question {current_num + 1} of {len(questions)}</p>
-        <h2>{question_data['question']}</h2>
+        <h2>{question_data["question"]}</h2>
         <form id="answerForm" method="POST" action="/answer">
         {radio_buttons}
         </form>
@@ -321,16 +321,16 @@ def answer():
         - '/answer', an intermediary page with a user message that redirects to the next question after 3 seconds"""
     
     # user's answer based on radio button selected on '/question'
-    user_answer = int(request.form.get('answer', -1))
+    user_answer = int(request.form.get("answer", -1))
     
     # establishes the number of current question, the question data, and score for the current game session   
-    current_num = session.get('current_question', 0)
-    questions = session.get('questions', [])
-    score = session.get('score', 0)
+    current_num = session.get("current_question", 0)
+    questions = session.get("questions", [])
+    score = session.get("score", 0)
 
     # if there are no more questions, redirects to '/results' page instead of the question page
     if current_num >= len(questions):
-        return redirect(url_for('results'))
+        return redirect(url_for("results"))
     
     # gets info about the current question (based on question number)
     current_question_data = questions[current_num]
@@ -348,8 +348,8 @@ def answer():
     next_question_num = current_num + 1
     
     # save user progress
-    new_score = session['score']
-    new_question_num = session['current_question']
+    new_score = session["score"]
+    new_question_num = session["current_question"]
     
     # auto-redirect to the correct next pages based on whether there are more questions left for the curret session 
     # AI disclousure: used Claude Sonnet 4 to help with setting up automatic redirects
@@ -391,7 +391,7 @@ def results():
         - '/results' page at the end of the game."""
     
     # get the final number of correct answers and use that to calculate a percent-based final score
-    score = session.get('score', 0)
+    score = session.get("score", 0)
     score_percentage = round(score / 13 * 100)
 
     # final user score message on results page is based on the number of answers the user guessed correctly
