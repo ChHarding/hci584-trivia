@@ -3,11 +3,14 @@
 # IMPORTS
 #
 
+print("1. Starting imports...")
+
 from flask import Flask, render_template, request, redirect, url_for, session, flash 
 import html
 import random  
 import requests
-  
+
+print("2. Imports successful...")  
 
 # 
 # APP SET UP
@@ -15,10 +18,9 @@ import requests
 """ Standard code to make the app work"""
 
 app = Flask(__name__)
-
 app.secret_key = "placeholder-secret-key-for-version1_hci584-june-2025"
 
-
+print("3. Flask app created...")
 
 # 
 # GAME ENGINE FUNCTIONS
@@ -28,6 +30,8 @@ app.secret_key = "placeholder-secret-key-for-version1_hci584-june-2025"
 
 
 # USER JOURNEY STEP 2.1 (BACKGROUND): GET QUESTIONS FROM OPEN TRIVIA DATABASE
+
+print("4. About to define functions...")
 
 def get_questions():
     """ This function calls the Open Trivia Database (https://opentdb.com/api_config.php) API to retrieve the trivia 
@@ -189,36 +193,12 @@ def user_feedback(result):
     AI disclosure: Used Claude Sonnet 4 to generate HTML and JavaScript for Flask routes, as well as for 
     troubleshooting and debugging."""
 
+print("5. About to define routes...")
 
 # USER JOURNEY STEP 1: VISIT HOMEPAGE, LAUNCH GAME
 @app.route('/')
 def home():
-    """ This function is for the very first step of the user journey:
-        - user visits homepage, sees welcome message/instructions
-        - user selets button to launch game
-        
-        Returns:
-        - App '/' homepage
-        """
-    
-    return """
-    <html>
-    <head>
-        <title>Hello, Smarty Pants: A trivia game for smart people</title>
-    </head>
-    <body>
-        <h1>Hello, Smarty Pants. Let's test how smart you really are.</h1>
-        <p>Think you're oh-so-smart, don't you? We'll see about that.</p>
-        <p><strong>Hello, Smarty Pants</strong> is a general knowledge trivia game that only the smartest people can beat.
-        But don't worry&mdash;you'll be playing by yourself, and we'll never let anyone know if you're A+ 
-        material or just another average thinks-they-know-it-all.</p>
-        <p><em>Ready to get started?</em></p>
-        <a href="/start">
-            <button>Bring. It. On.</button>
-        </a>
-    </body>
-    </html>
-    """
+    return "<h1>Hello World! Flask is working!</h1>"
 
 @app.route('/start')
 def start():
@@ -427,6 +407,20 @@ def results():
 
 # execute game play when user selects to play game using button on homepage
 # AI disclosure: used Claude Sonnet 4 for this as I couldn't figure it out
+#if __name__ == "__main__":
+    #print("Starting app...")
+    #print("Local homepage for testing: http://127.0.0.1:5000") # for local hosting only; update once on Pythonanywhere
+
+#if __name__ == "__main__":
+    #print("Starting simple test...")
+    #print("Go to: http://127.0.0.1:5000")
+    #app.run(debug=True)
+
+print("6. About to start app...")
+
 if __name__ == "__main__":
+    print("7. In main block...")
     print("Starting app...")
-    print("Local homepage for testing: http://127.0.0.1:5000") # for local hosting only; update once on Pythonanywhere
+    print("Local homepage for testing: http://127.0.0.1:5000")
+    print("8. About to call app.run()...")
+    app.run(debug=True)
