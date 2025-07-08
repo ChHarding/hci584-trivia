@@ -345,9 +345,8 @@ def answer():
     # grabs associated user feedback message
     feedback_message = user_feedback(is_correct)
     
-    # calculate next question number; if there are no more questions, the game is over 
+    # calculate next question number
     next_question_num = current_num + 1
-    game_over = (next_question_num >= len(questions))
     
     # save user progress
     new_score = session['score']
@@ -355,7 +354,7 @@ def answer():
     
     # auto-redirect to the correct next pages based on whether there are more questions left for the curret session 
     # AI disclousure: used Claude Sonnet 4 to help with setting up automatic redirects
-    if result['game_over']:
+    if next_question_num >= len(questions):
         next_url = '/results'
         redirect_message = "That's it! Let's see your final score..."
     else:
