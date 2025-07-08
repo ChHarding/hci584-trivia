@@ -198,7 +198,32 @@ print("5. About to define routes...")
 # USER JOURNEY STEP 1: VISIT HOMEPAGE, LAUNCH GAME
 @app.route('/')
 def home():
-    return "<h1>Hello World! Flask is working!</h1>"
+    """ This function is for the very first step of the user journey:
+        - user visits homepage, sees welcome message/instructions
+        - user selets button to launch game
+        
+        Returns:
+        - App '/' homepage
+        """
+    
+    return """
+    <html>
+    <head>
+        <title>Hello, Smarty Pants: A trivia game for smart people</title>
+    </head>
+    <body>
+        <h1>Hello, Smarty Pants. Let's test how smart you really are.</h1>
+        <p>Think you're oh-so-smart, don't you? We'll see about that.</p>
+        <p><strong>Hello, Smarty Pants</strong> is a general knowledge trivia game that only the smartest people can beat.
+        But don't worry&mdash;you'll be playing by yourself, and we'll never let anyone know if you're A+ 
+        material or just another average thinks-they-know-it-all.</p>
+        <p><em>Ready to get started?</em></p>
+        <a href="/start">
+            <button>Bring. It. On.</button>
+        </a>
+    </body>
+    </html>
+    """
 
 @app.route('/start')
 def start():
@@ -391,7 +416,7 @@ def results():
     </head>
     <body>
         <h1>That's it. It's game over. Are you a truly a Smarty Pants?</h1>
-        <h2>You answered a total of <srong>{score}</strong> questions correctly
+        <h2>You answered a total of <strong>{score}</strong> questions correctly
         <br>for a final score of <strong>{score_percentage}%</strong></h2>
         <p>{final_score_message}</p>
         <p>Think you can do better the next time around? What not <a href="/">try again</a> now?</p>
