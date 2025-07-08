@@ -360,8 +360,8 @@ def answer():
     next_question_num = current_num + 1
     
     # save user progress
-    new_score = session["score"]
-    new_question_num = session["current_question"]
+    session["score"] = new_score
+    session["current_question"] = next_question_num 
     
     # auto-redirect to the correct next pages based on whether there are more questions left for the curret session 
     # AI disclousure: used Claude Sonnet 4 to help with setting up automatic redirects
@@ -384,7 +384,7 @@ def answer():
     </head>
     <body>
         <h2>{feedback_message}</h2>
-        <p>Current Score: {new_score}/{new_question_num}</p>
+        <p>Current Score: {new_score}/{next_question_num}</p>
         <p><em>{redirect_message}</em></p>
     </body>
     </html>
