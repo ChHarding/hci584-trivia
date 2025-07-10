@@ -1,4 +1,56 @@
-# **Multi-Player Trivia Game**
+
+# **Single Player Trivia Game**
+
+## **Light Specifications—Revision 3——Updated July 8, 2025**
+
+# **Description**
+
+_This is an update to the previously submitted spec, which simplifies the planned app to a single-player, self-serve game, with questions imported via API. The previous, now-deprecated original spec is noted below for reference._
+
+This project is a browser-based web application that allows users to play a self-serve, multiple-choice trivia game. It uses Flask as the web framework and the Open Trivia Database (https://opentdb.com/api_config.php) API as the question engine. The app automatically calculates the user’s score.
+
+The game app flow is as follows:
+
+1. User visits the app homepage →
+2. User selects option to start game →
+3. App presents first question →
+4. Player uses radio button to select answer →
+5. User selects submit button to confirm answer →
+6. App displays message indicating whether their answer was correct →
+7. Repeat steps 3–6 until user completes all questions →
+8. App displays user’s final score →
+9. User chooses to play again or exit
+
+
+Development includes:
+   
+* Python libraries and modules used:  
+  * Flask - web framework
+  * requests - to fetch API data
+  * html - for cleaning up data from API
+  * random - to randomize index order of correct answer for each question
+* External APIs:  
+  * Open Trivia Database for Q&A data
+
+
+# **User Tasks**
+
+There are three steps in the user journey:
+
+1. ***Visit Homepage; Start Game***
+A user visits the trivia game web app using a desktop or mobile browser. On the homepage, they see a welcome message and a button that let's them launch a single player, 13-question general knowledge trivia game. They press the button to play. (Behind the scenes, the app calls the Open Trivia Database API to fetch the question and answer data.)
+
+2. ***Play Game***
+The user sees the first question on the screen as well as their available options. They use a radio button to select the answer, after which they see a message as to whether they were correct or incorrect. They can also see their cumulative score. They are then automatically taken to the next question and follow the same process until all 13 questions. (Behind the scenes, app displays questions from the API one at a time after they've been cleaned. The user's answer automatically submits after they select a radio button, and the app determines whether the answer selected matches the correct answer. It then calculates the score and moves to the next question.)
+
+2. ***Finish Game; See Results***
+Once all the questions are answered, the user is redirected to a page that shows their results as a raw number of questions answered correctly and as a percentage of the whole. They can choose to return to the homepage to start a new game. (Behind the scenes, the game calculates the final percentage score based on the number of correct answers/the total number of questions. Based on the score, the app shows a specific concluding message.)
+
+___
+
+
+# **DEPRECATED** 
+## **Multi-Player Trivia Game**
 
 ## **Light Specifications—June 2025**
 

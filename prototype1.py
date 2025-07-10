@@ -1,136 +1,444 @@
 
 # 
-# IMPORTS -- delete documentation links prior to live implementation
+# IMPORTS
 #
 
-from flask import Flask, render_template, request, redirect, url_for
-from flask_sqlalchemy import SQLAlchemy
-from flask_login import LoginManager, UserMixin, login_user, logout_user, login_required, current_user 
-from flask_wtf import FlaskForm
-from flask_socketio import SocketIO, emit, join_room, leave_room 
-    ###  documentation: https://flask.palletsprojects.com/en/stable/
-
-from jinja2 import Template
-    ###  documentation: https://jinja.palletsprojects.com/en/stable/
-  
-import os # for phase 2 upgrade from sqlite (initial prototype) to PostgreSQL (needed for 10+ simultaeous players)
-import json
-from datetime import datetime 
-from random import randint
-
+from flask import Flask, render_template, request, redirect, url_for, session, flash 
+import html
+import random  
+import requests
 
 # 
 # APP SET UP
 #
+""" Standard code to make the app work"""
 
 app = Flask(__name__)
+app.secret_key = "placeholder-secret-key-for-version1_hci584-june-2025"
 
-# TODO #
-
-
-
+# 
+# GAME ENGINE FUNCTIONS
 #
-# DATABASE TABLES
-#
+""" Includes all of the functions that control the game.
+    AI disclosure: Used Claude Sonnet 4 for troubleshooting and debugging. """
 
-#Admin # TODO #
-""" This class is for the Game Administrator account type. This is a persistant account type that can log in 
-    with their email and password. It will include:
-    - Unique user ID (auto-generated random integer)
-    - User's first name
-    - User's last name
-    - Email
-    - Password for logging in (hash protected?)
-    - Date the user's account was created
-    - Date the user last logged in
+
+# USER JOURNEY STEP 2.1 (BACKGROUND): GET QUESTIONS FROM OPEN TRIVIA DATABASE
+
+def get_questions():
+    """ This function calls the Open Trivia Database (https://opentdb.com/api_config.php) API to retrieve the trivia 
+    questions and converts it into json format. Each game has a baker's dozen (13) of multiple choice questions. 
+    If the app encounters an error loading the questions, gives user an error message to try restarting 
+    the game (error message listed in Flask functions for user journey step 2).
+
+    Data returned includes:
+    - response_code
+    - results
+    -- type
+    -- difficulty
+    -- category
+    -- question
+    -- correct_answer
+    -- incorrect_answers
+
+    No arguments
+    """
+
+    url = f"https://opentdb.com/api.php?amount=13&category=9&difficulty=medium&type=multiple"
+    try:
+        response = requests.get(url)
+        data = response.json()
+        if data["response_code"] == 0:
+            return data["results"]
+        else:
+            return None
+    except:    
+        return None
+
+
+# USER JOURNEY STEP 2.2 (BACKGROUND): CLEAN QUESTION AND ANSWER DATA FROM API
+
+def clean_up_questions(all_raw_questions):
+    """ This function takes the raw data from the API and makes it presentable for human game play. This includes
+    updating HTML character codes so they are readable by humans (e.g., changing &#039; to ' or &quot; to ") and 
+    and randomizing the answer order so that the correct answer is not always in the same list location. Returns
+    the cleaned up questions, the cleaned up answer, and the location of the correct answer for ALL questions. 
+        
+    Arguments:
+    - all_raw_questions: questions retrieved from API via get_questions
     
-    **Needs to link to all of their games
-"""
-
-#Player # TODO #
-"""This class is for the Player account type. This is a temporary account type that is only used for a single game.
-    It will include:
-    - Username (unique within the game they are playing)
-    - Email 
-    - When the joined the game
-    - Which question they are on
-    - Their current score
+    Returns:
+    - list of cleaned question and answer data
+    """
     
-    **Needs to link to the associated game and the answers they submitted**
-"""
-
-#Game # TODO #
-"""This class is for the actual game itself—-a single game instance. It will include:
-    - The game "owner" aka the associated Game Admin account 
-    - Unique game ID (uses associated admin account ID as base)
-    - Game title
-    - Game description
-    - Unique URL slug
-    - API settings TBD
-    - Game status (i.e., draft, active, completed) 
-    - When game was created
-    - When game started
-    - When the game ended
-    - Which question is currently being shown 
-    - All the questions fetched from the API 
-
-    **Needs to generate unique URL slug from the title (determines the link users will visit to play game),
-    get the current question being shown via API, and link to all player and admin accounts**
-"""
-
-#Submissions # TODO #
-"""This class handles all of the answer submissions: one player's answer to one question. 
-    It will include:
-    - The player submitting the answer 
-    - The game it's for
-    - The question number 
-    - The answer the player selected 
-    - The correct answer 
-    - Whether they got it right (True/False)
-    - Timestamp for when it was submitted 
+    # if the function get_questions does pull in any questions, stops the function as there's no data to clean up
+    if not all_raw_questions:
+        return None
     
-    **Needs to link to associated player and game. Must ensure players can only submit a 
-    single answer and cannot change it once submitted (submitting no answer by the time question closes 
-    qualifies as answer).**
-"""
+    # create list to hold all the cleaned-up question data
+    questions = []
+    
+    for question_details in all_raw_questions:
+        
+        # first, cleans up special HTML characters and makes the questions human readable
+        question = html.unescape(question_details["question"])
+        
+        # creates a combined list to all answers by pulling together all correct and incorrect answers
+        raw_answers = [question_details["correct_answer"]] + question_details["incorrect_answers"]
+        
+        # create list to hold all the cleaned-up answer data for a each question
+        answers = []
 
+        # for each of the answer options, clean up special HTML characters
+        for a in raw_answers:
+            cleaned_answers = html.unescape(a)
+            answers.append(cleaned_answers)
+        cleaned_correct_answer = html.unescape(question_details["correct_answer"])
+        
+        # random shuffle all the cleaned-up answer options so the correct answers are not predictable, then make
+        #  a note of the index for the correct answer for that specific question so it can be used to grade user results
+        random.shuffle(answers)
+        correct_index = answers.index(cleaned_correct_answer)
+        
+        # documents final cleaned-up questions, saves question, answers, and correct index fields to questions list
+        cleaned_question = {
+            "question": question,
+            "answers": answers,
+            "correct_index": correct_index
+        }
+        questions.append(cleaned_question)
+    
+    return questions
+
+
+# USER JOURNEY STEP 2.3 (BACKGROUND): CHECK IF SUBMITTED ANSWER IS CORRECT
+
+def check_answer(user_answer_index, question_data):
+    """ This function checks if the answer the user submitted matches the correct answer from the API data.
+    
+    Arguments:
+    - user_answer_index: the index of the answer the user selected
+    - question_data: list containing current question's info including correct_index
+    
+    Returns:
+    - True if answer's answer matches the correct answer index
+    - False if it does not match the correct answer
+    """
+    
+    # identity the index for correct answer to the current question
+    correct_index = question_data["correct_index"]
+
+    # use index to determine if user's answer is right or wrong
+    if user_answer_index == correct_index:
+        return True
+    else:
+        return False
+
+
+# USER JOURNEY STEP 2.4 (BACKGROUND): UPDATE RUNNING SCORE AFTER ANSWER CHECKED
+
+def update_total_score(current_score, user_correct):
+    """ This function updates the user's running total score for the game thus far based on whether their
+    answer to the previous question was correct or incorrect. It uses the check_answer function to determine
+    if the user had a correct (True) answer or incorrect (False) answer.
+    
+    Arguments:
+    - current_score: the user's current score (i.e., prior to the question just answered)
+    - user_correct: True/False if the answer was right as determined by check_answer function
+    
+    Returns:
+    - updated score (current_score + 1 if correct, no change if incorrect)
+    """
+
+    # uses check_answer and current score to determine new score
+    if user_correct == True:
+        return current_score + 1
+    else:
+        return current_score
+
+# USER JOURNEY STEP 2.5 (BACKGROUND): USER FEEDBACK AFTER SUBMITTING ANSWER
+##  in phase 2, may update this to display to currect answer as part of the message rather than a simple right/wrong message
+
+def user_feedback(result):
+    """ This function provides a user feedback message after the user has answered a question, alerting them 
+    whether they were correct or incorrect.
+    
+    Arguments:
+    - result from check_answer (True/False)
+    
+    Returns:
+    - User messaging indicating whether the answer was correct or incorrect
+    """
+
+    # uses check_answer to determine if user gets a correct vs. incorrect temporary feedback message 
+    if result == True:
+        return f"Woohoo! You are smart (and you've got the correct answers to prove it)."
+    else:
+        return f"Smart? Not on this question. Your answer was wrong."
+
+# 
+# FLASK FUNCTIONS
 #
-# FORMS
+""" Includes all the Flask routes and basic HTML - will update with separate HTML/CSS/JS files as needed 
+    in phase 2 once the basic app structure is built and tested
+    
+    AI disclosure: Used Claude Sonnet 4 to generate HTML and JavaScript for Flask routes, as well as for 
+    troubleshooting and debugging."""
+
+# USER JOURNEY STEP 1: VISIT HOMEPAGE, LAUNCH GAME
+@app.route('/')
+def home():
+    """ This function is for the very first step of the user journey:
+        - user visits homepage, sees welcome message/instructions
+        - user selets button to launch game
+        
+        Returns:
+        - App '/' homepage
+        """
+    
+    return """
+    <html>
+    <head>
+        <title>Hello, Smarty Pants: A trivia game for smart people</title>
+    </head>
+    <body>
+        <h1>Hello, Smarty Pants. Let's test how smart you really are.</h1>
+        <p>Think you're oh-so-smart, don't you? We'll see about that.</p>
+        <p><strong>Hello, Smarty Pants</strong> is a general knowledge trivia game that only the smartest people can beat.
+        But don't worry&mdash;you'll be playing by yourself, and we'll never let anyone know if you're A+ 
+        material or just another average thinks-they-know-it-all.</p>
+        <p><em>Ready to get started?</em></p>
+        <a href="/start">
+            <button>Bring. It. On.</button>
+        </a>
+    </body>
+    </html>
+    """
+
+@app.route('/start')
+def start():
+    # possible phase 2 augmentation: show dynamic countdown clock
+    """ This function launches the actual game after user input on homepage.
+        
+        Returns:
+        - Game '/start' sequence
+        - First question '/question' page (delayed autodirect)
+        """
+
+    # runs first two game engine functions to pull questions from the API and get them cleaned and ready to display
+    raw_questions = get_questions()
+    questions = clean_up_questions(raw_questions)
+
+    # error handling
+    # AI disclosure: added this from Claude during troubleshooting
+    if not questions:
+        return """
+        <html>
+        <head>
+            <title>Hello, Smarty Pants: Oops!</title>
+        </head>
+        <body>
+            <h1>Uh oh! Something went wrong.</h1>
+            <p>We couldn't load the trivia questions right now. That's a bummer.</p>
+            <p>Try refreshing the page or come back in a few minutes,</p>
+            <a href="/"><button>Go Back</button></a>
+        </body>
+        </html>
+        """
+
+    # initializes the game session using the pulled questions
+    session["questions"] = questions
+    session["current_question"] = 0
+    session["score"] = 0
+    
+    return """
+    <html>
+    <head>
+        <title>Hello, Smarty Pants: Let's get this game going!</title>
+        <script>
+            setTimeout(function() {
+                window.location.href = '/question';
+            }, 3000);
+        </script>
+    </head>
+    <body>
+        <h1>Time to prove your smarts!</h1>
+        <p>Think you're oh-so-smart don't you? We'll see about that.</p>
+        <p><em>Get ready, get set&hellip;</em></p>
+    </body>
+    </html>
+    """
+
+# USER JOURNEY STEP 2: VIEW QUESTION AND SELECT/SUBMIT ANSWER
+
+@app.route('/question')
+def show_question():
+    """ This function shows the cleaned up questions and available answer options to the user. In addition, the user 
+        can see which question they are on (i.e., Question X of Y). The user selects an answer from a 
+        list of radio buttons. The answer is automatically submitted once a radio button is active; there 
+        is no separate submit button.
+        
+        Returns:
+        - Main game play '/questions' page
+        """
+    
+    # establishes the number of current question and the question data for the current game session  
+    current_num = session.get("current_question", 0)
+    questions = session.get("questions", [])
+
+    # Displays special message if there are no more questions to answer
+    if current_num >= len(questions):
+        return "That's it. You're answered them all. There're no more questions. Zip, Zero. Zilch. Nada. "
+
+    # Pulls the data for the current question number so it can be displayed on the page
+    question_data = questions[current_num]
+
+    # Create radio buttons for each answer option
+    # AI disclosure: Used Claude Sonnet 4 to create the following block for the radio buttons
+    radio_buttons = ""
+    for i, answer in enumerate(question_data["answers"]):
+        radio_buttons += (
+            f'<input type="radio" name="answer" value="{i}" '
+            f'id="answer{i}" onchange="submitAnswer()">'
+            f'<label for="answer{i}"> {answer}</label>'
+            f'<br><br>'
+        )
+
+    return f"""
+    <html>
+    <head>
+        <title>Hello, Smarty Pants: We've got questions. You've got answers.</title>
+        <script>
+            function submitAnswer() {{
+                document.getElementById('answerForm').submit();
+            }}
+        </script>
+    </head>
+    <body>
+        <p>Question {current_num + 1} of {len(questions)}</p>
+        <h2>{question_data["question"]}</h2>
+        <form id="answerForm" method="POST" action="/answer">
+        {radio_buttons}
+        </form>
+    </body>
+    </html>"""
+
+@app.route('/answer', methods=['POST'])
+def answer():
+    """ This function processes the user's selected answer from the form on '/quetion' using the check_answer game 
+        logic function. It then displays a user message based on results and automatically redirects the user to
+        the next question.
+        
+        Returns:
+        - '/answer', an intermediary page with a user message that redirects to the next question after 3 seconds"""
+    
+    # user's answer based on radio button selected on '/question'
+    user_answer = int(request.form.get("answer", -1))
+    
+    # establishes the number of current question, the question data, and score for the current game session   
+    current_num = session.get("current_question", 0)
+    questions = session.get("questions", [])
+    score = session.get("score", 0)
+
+    # if there are no more questions, redirects to '/results' page instead of the question page
+    if current_num >= len(questions):
+        return redirect(url_for("results"))
+    
+    # gets info about the current question (based on question number)
+    current_question_data = questions[current_num]
+
+    # determine if user's answer is current question correct
+    is_correct = check_answer(user_answer, current_question_data)
+
+    # updates score
+    new_score = update_total_score(score, is_correct)
+
+    # grabs associated user feedback message
+    feedback_message = user_feedback(is_correct)
+    
+    # calculate next question number
+    next_question_num = current_num + 1
+    
+    # save user progress
+    session["score"] = new_score
+    session["current_question"] = next_question_num 
+    
+    # auto-redirect to the correct next pages based on whether there are more questions left for the curret session 
+    # AI disclousure: used Claude Sonnet 4 to help with setting up automatic redirects
+    if next_question_num >= len(questions):
+        next_url = '/results'
+        redirect_message = "That's it! Let's see your final score..."
+    else:
+        next_url = '/question'
+        redirect_message = "Let's try a new question..."
+    
+    return f"""
+    <html>
+    <head>
+        <title>Hello, Smarty Pants: Were you right? Or downright wrong?</title>
+        <script>
+            setTimeout(function() {{
+                window.location.href = '{next_url}';
+            }}, 3000);
+        </script>
+    </head>
+    <body>
+        <h2>{feedback_message}</h2>
+        <p>Current Score: {new_score}/{next_question_num}</p>
+        <p><em>{redirect_message}</em></p>
+    </body>
+    </html>
+    """
+
+# USER JOURNEY STEP 3: SEE FINAL RESULTS AT END OF GAME
+
+@app.route('/results')
+def results():
+    """ This function displays the final score at the end of the game. Both the raw (number of questions 
+        answered coreectly) and the percentage (answered correctly out of the total number of questions) is show. 
+        Also shows a final message based on the number of questions the user got correct. User has the option to 
+        return to the homepage and start a new game.
+    
+        Returns:
+        - '/results' page at the end of the game."""
+    
+    # get the final number of correct answers and use that to calculate a percent-based final score
+    score = session.get("score", 0)
+    score_percentage = round(score / 13 * 100)
+
+    # final user score message on results page is based on the number of answers the user guessed correctly
+    if score == 13:
+        final_score_message = f"Daaaaaaamn... you sure are smart!"
+    elif 13 > score >= 10:
+        final_score_message = f"OK, we'll admit it: You are pretty smart. This time."
+    elif 10 > score >= 5:
+        final_score_message = f"Meh. You could've done better. Of course, you could have done worse. Consider yourself solidly average."
+    else:
+        final_score_message = f"Smart? Sorry, not this time. Perhaps trivia isn't your game?"
+    
+    return f"""
+    <html>
+    <head>
+        <title>Hello, Smarty Pants: The proof is in the final score.</title>
+    </head>
+    <body>
+        <h1>That's it. It's game over. Are you a truly a Smarty Pants?</h1>
+        <h2>You answered a total of <strong>{score}</strong> questions correctly
+        <br>for a final score of <strong>{score_percentage}%</strong></h2>
+        <p>{final_score_message}</p>
+        <p>Think you can do better the next time around? What not <a href="/">try again</a> now?</p>
+    </body>
+    </html>
+    """    
+
+
+# 
+# RUN APP
 #
-
-#NewAccountForm # TODO #
-""" Form to register for a new admin user account. Includes:
-    - Field: First Name (required)
-    - Field: Last Name (required)
-    - Field: Email (required - must be in acceptable format) 
-    - Field: Password (required - must be in acceptable format) 
-    - Field: Confirm Password (required - must match first password submission exactly) 
-    - Button: Create Account 
-"""
-
-#LogInForm # TODO #
-""" Form that allows registered admin users to log into the app. Includes:
-    - Field: Email (required) 
-    - Field: Password (required) 
-    - Button: Log In 
-"""
-
-#PlayerJoinForm # TODO #
-""" Form that allows player to join a game. Includes:
-    - Field: username (required) 
-    - Field: Email (optional) 
-    - Button: Join Game 
-"""
-
-#CreateGameForm # TODO #
-""" Form for creating a new game. Fields for this are TBD now that I'm switching to using the Q/A API, but may include:
-    - Field: Game Name (required) 
-    - Field: Game Description (optional) 
-    - Field: Game Date and Time (optional - text field for user messaging only, doesn't control game play)
-    - Other fields TBD based on API
-    - Button: Create Game
-""" 
+""" Includes final code to make this bad boy run"""
 
 
-
-
+if __name__ == "__main__":
+    print("Starting app...")
+    print("Local homepage for testing: http://127.0.0.1:5000")
+    app.run(debug=True)
