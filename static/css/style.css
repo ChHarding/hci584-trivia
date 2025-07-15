@@ -2,7 +2,7 @@
 @import url('https://use.typekit.net/qcr5acn.css');
 
 /* IMPORT TAILWIND */
-@import 'https://cdn.jsdelivr.net/npm/tailwindcss@3.4.0/dist/tailwind.min.css';
+@import url('https://cdn.tailwindcss.com');
 
 /* DEFINE CUSTOM COLORS */
 :root {
