@@ -25,14 +25,17 @@
     <!-- ANSWER OPTIONS -->
     <div class="bg-light-blue px-4 md:px-8 py-8">
         <form id="answerForm" method="POST" action="{{ url_for('answer') }}">
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-8 mb-8">
-                {% for answer_option in question_data.answers %}
-                <div class="flex items-center my-4 cursor-pointer">
-                    <input type="radio" name="answer" value="{{ loop.index0 }}" id="answer{{ loop.index0 }}" onchange="submitAnswer()" class="mr-4 w-5 h-5" style="accent-color: var(--yellow);">
-                    <label for="answer{{ loop.index0 }}" class="font-segoe text-warm-black text-lg cursor-pointer">{{ answer_option }}</label>
+            <fieldset class="border-0 p-0 m-0">
+                <legend class="sr-only">Choose your answer from the options below</legend>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-8 mb-8">
+                    {% for answer_option in question_data.answers %}
+                    <div class="flex items-center my-4 cursor-pointer">
+                        <input type="radio" name="answer" value="{{ loop.index0 }}" id="answer{{ loop.index0 }}" onchange="submitAnswer()" class="mr-4 w-5 h-5" style="accent-color: var(--yellow);">
+                        <label for="answer{{ loop.index0 }}" class="font-segoe text-warm-black text-lg cursor-pointer">{{ answer_option }}</label>
+                    </div>
+                    {% endfor %}
                 </div>
-                {% endfor %}
-            </div>
+            </fieldset>
         </form>
         
         <div class="text-right">
