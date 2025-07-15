@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hello, Smarty Pants: A trivia game for smart people</title>
+    <link rel="stylesheet" href="https://use.typekit.net/qcr5acn.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body class="min-h-screen bg-light-blue">
+    <div class="flex flex-col justify-center items-center min-h-screen p-4 md:p-8 text-center md:text-left">
+        <div class="max-w-3xl mx-auto">
+            <h1 class="font-rockwell text-4xl md:text-6xl lg:text-7xl font-bold text-warm-black leading-tight mb-4">Hello, Smarty Pants.</h1>
+            <h2 class="font-rockwell text-xl md:text-2xl lg:text-3xl text-warm-black leading-snug mb-8">Let's test how smart you really are.</h2>
+            
+            <div class="space-y-6 mb-8">
+                <p class="font-segoe text-base md:text-lg lg:text-xl text-warm-black leading-relaxed">Think you're oh-so-smart, don't you? We'll see about that.</p>
+                
+                <p class="font-segoe text-base md:text-lg lg:text-xl text-warm-black leading-relaxed">
+                    <strong class="font-rockwell">Hello, Smarty Pants</strong> is a general knowledge trivia game that 
+                    only the smartest people can beat.
+                </p>
+                
+                <p class="font-segoe text-base md:text-lg lg:text-xl text-warm-black leading-relaxed">
+                    But don't worry&mdash;you'll be playing by yourself, and we'll 
+                    never let anyone know if you're A+ material or just another 
+                    average <em>thinks-they-know-it-all</em>.
+                </p>
+                
+                <p class="font-segoe text-base md:text-lg lg:text-xl text-warm-black leading-relaxed">Ready to get started?</p>
+            </div>
+            
+            <a href="{{ url_for('start') }}" class="bg-yellow text-red font-rockwell font-bold rounded-lg no-underline inline-block transition-all duration-200 hover:-translate-y-0.5 hover:shadow-lg px-4 py-3 md:px-8 md:py-4 text-base md:text-lg">Bring. It. On.</a>
+        </div>
+    </div>
+</body>
+</html>
