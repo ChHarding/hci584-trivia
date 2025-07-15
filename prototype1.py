@@ -321,7 +321,7 @@ def show_question():
         <form id="answerForm" method="POST" action="/answer">
         {radio_buttons}
         </form>
-        <p>&larr; Take me home.</p>
+        <p>&larr; <a href="/">Take me home.</a></p>
     </body>
     </html>"""
 
@@ -424,11 +424,11 @@ def results():
         <title>Hello, Smarty Pants: The proof is in the final score.</title>
     </head>
     <body>
-        <h1>That's it. It's game over. Are you a truly a Smarty Pants?</h1>
-        <h2>You answered a total of <strong>{score}</strong> questions correctly
-        <br>for a final score of <strong>{score_percentage}%</strong></h2>
-        <p>{final_score_message}</p>
-        <p>Think you can do better the next time around? What not <a href="/">try again</a> now?</p>
+        <p>That's it. It's game over. Are you a truly a Smarty Pants?</p>
+        <h3>You answered a total of <strong>{score}</strong> questions correctly
+        <br>for a final score of <strong>{score_percentage}%</strong></h3>
+        <h2>{final_score_message}</h2>
+        <p>Think you can do better the next time around? Why not <a href="/">try again</a> now?</p>
     </body>
     </html>
     """    
