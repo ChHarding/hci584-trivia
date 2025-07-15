@@ -202,12 +202,13 @@ def home():
         <title>Hello, Smarty Pants: A trivia game for smart people</title>
     </head>
     <body>
-        <h1>Hello, Smarty Pants. Let's test how smart you really are.</h1>
+        <h1>Hello, Smarty Pants.</h1>
+        <h2>Let's test how smart you really are.</h2>
         <p>Think you're oh-so-smart, don't you? We'll see about that.</p>
         <p><strong>Hello, Smarty Pants</strong> is a general knowledge trivia game that only the smartest people can beat.
         But don't worry&mdash;you'll be playing by yourself, and we'll never let anyone know if you're A+ 
-        material or just another average thinks-they-know-it-all.</p>
-        <p><em>Ready to get started?</em></p>
+        material or just another average <em>thinks-they-know-it-all</em>.</p>
+        <p>Ready to get started?</p>
         <a href="/start">
             <button>Bring. It. On.</button>
         </a>
