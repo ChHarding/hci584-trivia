@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hello, Smarty Pants: We've got questions. You've got answers.</title>
+    <link rel="stylesheet" href="https://use.typekit.net/qcr5acn.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <script>
+        function submitAnswer() {
+            document.getElementById('answerForm').submit();
+        }
+    </script>
+</head>
+
+<body class="min-h-screen bg-white">
+    <div class="bg-light-blue px-4 md:px-8 py-4 font-segoe text-warm-black text-lg">
+        Question {{ current_question_num }} of {{ total_questions }}
+    </div>
+    
+    <!-- QUESTION -->
+    <div class="bg-white px-4 md:px-8 py-8">
+        <h2 class="font-rockwell text-xl md:text-4xl font-bold text-warm-black leading-tight mb-8">{{ question_data.question }}</h2>
+    </div>
+    
+    <!-- ANSWER OPTIONS -->
+    <div class="bg-light-blue px-4 md:px-8 py-8">
+        <form id="answerForm" method="POST" action="{{ url_for('answer') }}">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-8 mb-8">
+                {% for answer_option in question_data.answers %}
+                <div class="flex items-center my-4 cursor-pointer">
+                    <input type="radio" name="answer" value="{{ loop.index0 }}" id="answer{{ loop.index0 }}" onchange="submitAnswer()" class="mr-4 w-5 h-5" style="accent-color: var(--yellow);">
+                    <label for="answer{{ loop.index0 }}" class="font-segoe text-warm-black text-lg cursor-pointer">{{ answer_option }}</label>
+                </div>
+                {% endfor %}
+            </div>
+        </form>
+        
+        <div class="text-right">
+            <a href="{{ url_for('home') }}" class="text-red font-segoe no-underline text-base hover:underline">&larr; Take me home</a>
+        </div>
+    </div>
+</body>
+</html>
