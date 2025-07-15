@@ -234,23 +234,7 @@ def start():
     session["current_question"] = 0
     session["score"] = 0
     
-    return """
-    <html>
-    <head>
-        <title>Hello, Smarty Pants: Let's get this game going!</title>
-        <script>
-            setTimeout(function() {
-                window.location.href = '/question';
-            }, 3000);
-        </script>
-    </head>
-    <body>
-        <h1>Time to prove your smarts!</h1>
-        <p>Think you're oh-so-smart don't you? We'll see about that.</p>
-        <p><em>Get ready, get set&hellip;</em></p>
-    </body>
-    </html>
-    """
+    return render_template('start.html', error=False)
 
 # USER JOURNEY STEP 2: VIEW QUESTION AND SELECT/SUBMIT ANSWER
 
