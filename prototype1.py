@@ -321,6 +321,7 @@ def show_question():
         <form id="answerForm" method="POST" action="/answer">
         {radio_buttons}
         </form>
+        <p>&larr; Take me home.</p>
     </body>
     </html>"""
 
