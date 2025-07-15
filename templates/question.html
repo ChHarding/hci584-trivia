@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Hello, Smarty Pants: We've got questions. You've got answers.</title>
     <link rel="stylesheet" href="https://use.typekit.net/qcr5acn.css">
+    <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
     <script>
         function submitAnswer() {
@@ -12,7 +13,7 @@
         }
     </script>
 </head>
-<body class="min-h-screen bg-white">
+<body class="min-h-screen bg-light-blue">
     <div class="bg-light-blue px-4 md:px-8 py-4 font-segoe text-warm-black text-lg">
         Question {{ current_question_num }} of {{ total_questions }}
     </div>

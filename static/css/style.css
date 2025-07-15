@@ -1,9 +1,6 @@
 /* IMPORT FONTS */
 @import url('https://use.typekit.net/qcr5acn.css');
 
-/* IMPORT TAILWIND */
-@import url('https://cdn.tailwindcss.com');
-
 /* DEFINE CUSTOM COLORS */
 :root {
   --light-blue: #6faebd;
