@@ -215,19 +215,7 @@ def start():
     # error handling
     # AI disclosure: added this from Claude during troubleshooting
     if not questions:
-        return """
-        <html>
-        <head>
-            <title>Hello, Smarty Pants: Oops!</title>
-        </head>
-        <body>
-            <h1>Uh oh! Something went wrong.</h1>
-            <p>We couldn't load the trivia questions right now. That's a bummer.</p>
-            <p>Try refreshing the page or come back in a few minutes,</p>
-            <a href="/"><button>Go Back</button></a>
-        </body>
-        </html>
-        """
+        return render_template('start.html', error=True)
 
     # initializes the game session using the pulled questions
     session["questions"] = questions
