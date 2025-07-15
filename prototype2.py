@@ -335,21 +335,10 @@ def results():
     else:
         final_score_message = f"Smart? Sorry, not this time. Perhaps trivia isn't your game?"
     
-    return f"""
-    <html>
-    <head>
-        <title>Hello, Smarty Pants: The proof is in the final score.</title>
-    </head>
-    <body>
-        <p>That's it. It's game over. Are you a truly a Smarty Pants?</p>
-        <h2>{final_score_message}</h2>
-        <h3>You answered a total of <strong>{score}</strong> questions correctly
-        <br>for a final score of <strong>{score_percentage}%</strong></h3>
-        <p>Think you can do better the next time around? Why not <a href="/">try again</a> now?</p>
-    </body>
-    </html>
-    """    
-
+    return render_template("results.html",
+                            final_score=score,
+                            score_percentage=score_percentage,
+                            final_score_message=final_score_message)
 
 # 
 # RUN APP

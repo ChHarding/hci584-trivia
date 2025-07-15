@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hello, Smarty Pants: The proof is in the final score.</title>
+    <link rel="stylesheet" href="https://use.typekit.net/qcr5acn.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body class="min-h-screen">
+
+    <div class="bg-light-blue p-4 md:p-8 text-center">
+        <p class="font-segoe text-base md:text-lg lg:text-xl text-warm-black leading-relaxed mb-8">That's it. It's game over. Are you a truly a Smarty Pants?</p>
+        
+        <p class="font-segoe text-base md:text-lg lg:text-xl text-warm-black leading-relaxed">
+            You answered a total of <span class="text-yellow font-bold">{{ final_score }}</span> questions correctly<br>
+            for a final score of <span class="text-yellow font-bold">{{ score_percentage }}%</span>
+        </p>
+    </div> 
+
+    <div class="bg-white p-4 md:p-8 text-center">
+        <h2 class="font-rockwell text-2xl md:text-4xl lg:text-5xl font-bold text-warm-black leading-tight">{{ final_score_message }}</h2>
+    </div>
+    
+    <div class="bg-light-blue p-4 md:p-8 text-center">
+        <p class="font-segoe text-base md:text-lg lg:text-xl text-warm-black leading-relaxed">
+            Think you can do better the next time around? 
+            Why not <a href="{{ url_for('home') }}" class="text-red font-bold">try again</a> now?
+        </p>
+    </div>
+</body>
+</html>
