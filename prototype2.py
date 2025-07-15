@@ -196,7 +196,7 @@ def home():
         - App '/' homepage
         """
     
-    return render_template('home.html')
+    return render_template("home.html")
 
 @app.route('/start')
 def start():
@@ -222,7 +222,7 @@ def start():
     session["current_question"] = 0
     session["score"] = 0
     
-    return render_template('start.html', error=False)
+    return render_template("start.html", error=False)
 
 # USER JOURNEY STEP 2: VIEW QUESTION AND SELECT/SUBMIT ANSWER
 
@@ -248,7 +248,7 @@ def show_question():
     # Pulls the data for the current question number so it can be displayed on the page
     question_data = questions[current_num]
 
-    return render_template('question.html',
+    return render_template("question.html",
                             question_data=question_data,
                             current_question_num=current_num + 1,
                             total_questions=len(questions))
@@ -296,29 +296,18 @@ def answer():
     # auto-redirect to the correct next pages based on whether there are more questions left for the curret session 
     # AI disclousure: used Claude Sonnet 4 to help with setting up automatic redirects
     if next_question_num >= len(questions):
-        next_url = '/results'
+        next_url = url_for("results")
         redirect_message = "That's it! Let's see your final score..."
     else:
-        next_url = '/question'
+        next_url = url_for("show_question")
         redirect_message = "Let's try a new question..."
     
-    return f"""
-    <html>
-    <head>
-        <title>Hello, Smarty Pants: Were you right? Or downright wrong?</title>
-        <script>
-            setTimeout(function() {{
-                window.location.href = '{next_url}';
-            }}, 3000);
-        </script>
-    </head>
-    <body>
-        <h2>{feedback_message}</h2>
-        <p>Current Score: {new_score}/{next_question_num}</p>
-        <p><em>{redirect_message}</em></p>
-    </body>
-    </html>
-    """
+    return render_template("answer.html",
+                            feedback_message=feedback_message,
+                            current_score=new_score,
+                            current_question_num=next_question_num,
+                            redirect_message=redirect_message,
+                            next_url=next_url) 
 
 # USER JOURNEY STEP 3: SEE FINAL RESULTS AT END OF GAME
 

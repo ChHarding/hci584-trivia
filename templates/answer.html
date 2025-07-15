@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hello, Smarty Pants: Were you right? Or downright wrong?</title>
+    <link rel="stylesheet" href="https://use.typekit.net/qcr5acn.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <script>
+        setTimeout(function() {
+            window.location.href = '{{ next_url }}';
+        }, 3000);
+    </script>
+</head>
+<body class="min-h-screen bg-light-blue">
+    <div class="flex flex-col justify-center items-center min-h-screen p-4 md:p-8 text-center">
+        <div class="max-w-3xl mx-auto text-center">
+            <h2 class="font-rockwell text-3xl md:text-5xl lg:text-6xl font-bold text-yellow leading-tight mb-8">{{ feedback_message }}</h2>
+            
+            <p class="font-segoe text-base md:text-lg lg:text-xl text-warm-black leading-relaxed mb-4">Current score: {{ current_score }}/{{ current_question_num }}</p>
+            
+            <p class="italic text-yellow font-segoe text-xl">{{ redirect_message }}</p>
+        </div>
+    </div>
+</body>
+</html>
