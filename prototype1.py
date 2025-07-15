@@ -425,9 +425,9 @@ def results():
     </head>
     <body>
         <p>That's it. It's game over. Are you a truly a Smarty Pants?</p>
+        <h2>{final_score_message}</h2>
         <h3>You answered a total of <strong>{score}</strong> questions correctly
         <br>for a final score of <strong>{score_percentage}%</strong></h3>
-        <h2>{final_score_message}</h2>
         <p>Think you can do better the next time around? Why not <a href="/">try again</a> now?</p>
     </body>
     </html>
