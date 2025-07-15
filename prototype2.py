@@ -248,36 +248,10 @@ def show_question():
     # Pulls the data for the current question number so it can be displayed on the page
     question_data = questions[current_num]
 
-    # Create radio buttons for each answer option
-    # AI disclosure: Used Claude Sonnet 4 to create the following block for the radio buttons
-    radio_buttons = ""
-    for i, answer in enumerate(question_data["answers"]):
-        radio_buttons += (
-            f'<input type="radio" name="answer" value="{i}" '
-            f'id="answer{i}" onchange="submitAnswer()">'
-            f'<label for="answer{i}"> {answer}</label>'
-            f'<br><br>'
-        )
-
-    return f"""
-    <html>
-    <head>
-        <title>Hello, Smarty Pants: We've got questions. You've got answers.</title>
-        <script>
-            function submitAnswer() {{
-                document.getElementById('answerForm').submit();
-            }}
-        </script>
-    </head>
-    <body>
-        <p>Question {current_num + 1} of {len(questions)}</p>
-        <h2>{question_data["question"]}</h2>
-        <form id="answerForm" method="POST" action="/answer">
-        {radio_buttons}
-        </form>
-        <p>&larr; <a href="/">Take me home.</a></p>
-    </body>
-    </html>"""
+    return render_template('question.html',
+                            question_data=question_data,
+                            current_question_num=current_num + 1,
+                            total_questions=len(questions))
 
 @app.route('/answer', methods=['POST'])
 def answer():
