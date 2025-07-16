@@ -196,24 +196,7 @@ def home():
         - App '/' homepage
         """
     
-    return """
-    <html>
-    <head>
-        <title>Hello, Smarty Pants: A trivia game for smart people</title>
-    </head>
-    <body>
-        <h1>Hello, Smarty Pants. Let's test how smart you really are.</h1>
-        <p>Think you're oh-so-smart, don't you? We'll see about that.</p>
-        <p><strong>Hello, Smarty Pants</strong> is a general knowledge trivia game that only the smartest people can beat.
-        But don't worry&mdash;you'll be playing by yourself, and we'll never let anyone know if you're A+ 
-        material or just another average thinks-they-know-it-all.</p>
-        <p><em>Ready to get started?</em></p>
-        <a href="/start">
-            <button>Bring. It. On.</button>
-        </a>
-    </body>
-    </html>
-    """
+    return render_template("home.html")
 
 @app.route('/start')
 def start():
@@ -232,42 +215,14 @@ def start():
     # error handling
     # AI disclosure: added this from Claude during troubleshooting
     if not questions:
-        return """
-        <html>
-        <head>
-            <title>Hello, Smarty Pants: Oops!</title>
-        </head>
-        <body>
-            <h1>Uh oh! Something went wrong.</h1>
-            <p>We couldn't load the trivia questions right now. That's a bummer.</p>
-            <p>Try refreshing the page or come back in a few minutes,</p>
-            <a href="/"><button>Go Back</button></a>
-        </body>
-        </html>
-        """
+        return render_template('start.html', error=True)
 
     # initializes the game session using the pulled questions
     session["questions"] = questions
     session["current_question"] = 0
     session["score"] = 0
     
-    return """
-    <html>
-    <head>
-        <title>Hello, Smarty Pants: Let's get this game going!</title>
-        <script>
-            setTimeout(function() {
-                window.location.href = '/question';
-            }, 3000);
-        </script>
-    </head>
-    <body>
-        <h1>Time to prove your smarts!</h1>
-        <p>Think you're oh-so-smart don't you? We'll see about that.</p>
-        <p><em>Get ready, get set&hellip;</em></p>
-    </body>
-    </html>
-    """
+    return render_template("start.html", error=False)
 
 # USER JOURNEY STEP 2: VIEW QUESTION AND SELECT/SUBMIT ANSWER
 
@@ -293,35 +248,10 @@ def show_question():
     # Pulls the data for the current question number so it can be displayed on the page
     question_data = questions[current_num]
 
-    # Create radio buttons for each answer option
-    # AI disclosure: Used Claude Sonnet 4 to create the following block for the radio buttons
-    radio_buttons = ""
-    for i, answer in enumerate(question_data["answers"]):
-        radio_buttons += (
-            f'<input type="radio" name="answer" value="{i}" '
-            f'id="answer{i}" onchange="submitAnswer()">'
-            f'<label for="answer{i}"> {answer}</label>'
-            f'<br><br>'
-        )
-
-    return f"""
-    <html>
-    <head>
-        <title>Hello, Smarty Pants: We've got questions. You've got answers.</title>
-        <script>
-            function submitAnswer() {{
-                document.getElementById('answerForm').submit();
-            }}
-        </script>
-    </head>
-    <body>
-        <p>Question {current_num + 1} of {len(questions)}</p>
-        <h2>{question_data["question"]}</h2>
-        <form id="answerForm" method="POST" action="/answer">
-        {radio_buttons}
-        </form>
-    </body>
-    </html>"""
+    return render_template("question.html",
+                            question_data=question_data,
+                            current_question_num=current_num + 1,
+                            total_questions=len(questions))
 
 @app.route('/answer', methods=['POST'])
 def answer():
@@ -366,29 +296,18 @@ def answer():
     # auto-redirect to the correct next pages based on whether there are more questions left for the curret session 
     # AI disclousure: used Claude Sonnet 4 to help with setting up automatic redirects
     if next_question_num >= len(questions):
-        next_url = '/results'
+        next_url = url_for("results")
         redirect_message = "That's it! Let's see your final score..."
     else:
-        next_url = '/question'
+        next_url = url_for("show_question")
         redirect_message = "Let's try a new question..."
     
-    return f"""
-    <html>
-    <head>
-        <title>Hello, Smarty Pants: Were you right? Or downright wrong?</title>
-        <script>
-            setTimeout(function() {{
-                window.location.href = '{next_url}';
-            }}, 3000);
-        </script>
-    </head>
-    <body>
-        <h2>{feedback_message}</h2>
-        <p>Current Score: {new_score}/{next_question_num}</p>
-        <p><em>{redirect_message}</em></p>
-    </body>
-    </html>
-    """
+    return render_template("answer.html",
+                            feedback_message=feedback_message,
+                            current_score=new_score,
+                            current_question_num=next_question_num,
+                            redirect_message=redirect_message,
+                            next_url=next_url) 
 
 # USER JOURNEY STEP 3: SEE FINAL RESULTS AT END OF GAME
 
@@ -416,21 +335,10 @@ def results():
     else:
         final_score_message = f"Smart? Sorry, not this time. Perhaps trivia isn't your game?"
     
-    return f"""
-    <html>
-    <head>
-        <title>Hello, Smarty Pants: The proof is in the final score.</title>
-    </head>
-    <body>
-        <h1>That's it. It's game over. Are you a truly a Smarty Pants?</h1>
-        <h2>You answered a total of <strong>{score}</strong> questions correctly
-        <br>for a final score of <strong>{score_percentage}%</strong></h2>
-        <p>{final_score_message}</p>
-        <p>Think you can do better the next time around? What not <a href="/">try again</a> now?</p>
-    </body>
-    </html>
-    """    
-
+    return render_template("results.html",
+                            final_score=score,
+                            score_percentage=score_percentage,
+                            final_score_message=final_score_message)
 
 # 
 # RUN APP
