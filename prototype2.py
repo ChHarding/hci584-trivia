@@ -1,9 +1,11 @@
+# See https://joellenroberts.pythonanywhere.com for live demo
+
 
 # 
 # IMPORTS
 #
 
-from flask import Flask, render_template, request, redirect, url_for, session, flash 
+from flask import Flask, render_template, request, redirect, url_for, session, flash, jsonify 
 import html
 import random  
 import requests
@@ -159,12 +161,13 @@ def update_total_score(current_score, user_correct):
 # USER JOURNEY STEP 2.5 (BACKGROUND): USER FEEDBACK AFTER SUBMITTING ANSWER
 ##  in phase 2, may update this to display to currect answer as part of the message rather than a simple right/wrong message
 
-def user_feedback(result):
+def user_feedback(result, user_chosen_answer=None):
     """ This function provides a user feedback message after the user has answered a question, alerting them 
     whether they were correct or incorrect.
     
     Arguments:
-    - result from check_answer (True/False)
+    - result: from check_answer (True/False)
+    - user_chosen_answer: the text of the answer the user selected (for incorrect answers)
     
     Returns:
     - User messaging indicating whether the answer was correct or incorrect
@@ -174,7 +177,7 @@ def user_feedback(result):
     if result == True:
         return f"Woohoo! You are smart (and you've got the correct answers to prove it)."
     else:
-        return f"Smart? Not on this question. Your answer was wrong."
+        return f"Smart? Not on this question. <br><span class='text-red font-bold text-shadow-sm'>{user_chosen_answer}</span> is the wrong answer."
 
 # 
 # FLASK FUNCTIONS
@@ -283,8 +286,14 @@ def answer():
     # updates score
     new_score = update_total_score(score, is_correct)
 
-    # grabs associated user feedback message
-    feedback_message = user_feedback(is_correct)
+    # pulls text from user's selected answer to use in incorrect answer feedback message
+    user_answer_text = current_question_data["answers"][user_answer]
+
+    # grabs associated feedback message
+    if is_correct:
+        feedback_message = user_feedback(is_correct) 
+    else:
+        feedback_message = user_feedback(is_correct, user_answer_text) 
     
     # calculate next question number
     next_question_num = current_num + 1
@@ -293,21 +302,18 @@ def answer():
     session["score"] = new_score
     session["current_question"] = next_question_num 
     
-    # auto-redirect to the correct next pages based on whether there are more questions left for the curret session 
-    # AI disclousure: used Claude Sonnet 4 to help with setting up automatic redirects
-    if next_question_num >= len(questions):
-        next_url = url_for("results")
-        redirect_message = "That's it! Let's see your final score..."
-    else:
-        next_url = url_for("show_question")
-        redirect_message = "Let's try a new question..."
+    # Return JSON response for the overlay
+    # AI disclousure: reflects addition of JSON required for JavaScript dynamic display derived from Claude Sonnet 4
+    response_data = {
+        "is_correct": is_correct,
+        "feedback_message": feedback_message,
+        "current_score": new_score,
+        "current_question_num": next_question_num,
+        "total_questions": len(questions),
+        "has_more_questions": next_question_num < len(questions)
+    }
     
-    return render_template("answer.html",
-                            feedback_message=feedback_message,
-                            current_score=new_score,
-                            current_question_num=next_question_num,
-                            redirect_message=redirect_message,
-                            next_url=next_url) 
+    return jsonify(response_data)
 
 # USER JOURNEY STEP 3: SEE FINAL RESULTS AT END OF GAME
 
@@ -322,18 +328,19 @@ def results():
         - '/results' page at the end of the game."""
     
     # get the final number of correct answers and use that to calculate a percent-based final score
+    questions = session.get("questions", [])
     score = session.get("score", 0)
-    score_percentage = round(score / 13 * 100)
+    score_percentage = round(score / len(questions)) * 100
 
     # final user score message on results page is based on the number of answers the user guessed correctly
-    if score == 13:
+    if score_percentage == 100:
         final_score_message = f"Daaaaaaamn... you sure are smart!"
-    elif 13 > score >= 10:
-        final_score_message = f"OK, we'll admit it: You are pretty smart. This time."
-    elif 10 > score >= 5:
-        final_score_message = f"Meh. You could've done better. Of course, you could have done worse. Consider yourself solidly average."
+    elif 100 > score >= 75:
+        final_score_message = f"OK, we'll admit it: You are pretty smart. <br>This time."
+    elif 75 > score >= 50:
+        final_score_message = f"Meh. You could've done better. <br>Of course, you could have done worse. <br>Consider yourself solidly average."
     else:
-        final_score_message = f"Smart? Sorry, not this time. Perhaps trivia isn't your game?"
+        final_score_message = f"Smart? Sorry, not this time. <br>Perhaps trivia isn't your game?"
     
     return render_template("results.html",
                             final_score=score,
