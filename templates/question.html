@@ -9,56 +9,64 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 </head>
 <body class="min-h-screen bg-light-blue">
-    <div id="question-content" class="flex flex-col justify-center items-center min-h-screen p-4 md:p-8 text-center">
-        <div class="max-w-3xl mx-auto text-center">
-            <!-- COUNTER -->
-            <h1 class="font-segoe text-lg md:text-xl text-warm-black mb-4">
-                Question {{ current_question_num }} of {{ total_questions }}
-            </h1>
-            
-            <!-- QUESTION -->
-            <h2 class="font-rockwell text-2xl md:text-4xl lg:text-5xl font-bold text-yellow leading-tight mb-8">
-                {{ question_data.question }}
-            </h2>
-            
-            <!-- ANSWER OPTIONS -->
-            <form id="answer-form" class="space-y-4">
-                {% for i, answer in enumerate(question_data.answers) %}
-                <div class="answer-option">
-                    <input 
-                        type="radio" 
-                        name="answer" 
-                        value="{{ i }}" 
-                        id="answer{{ i }}"
-                        class="sr-only answer-radio"
-                    >
-                    <label 
-                        for="answer{{ i }}" 
-                        class="block w-full p-4 md:p-6 bg-yellow text-warm-black font-segoe text-base md:text-lg lg:text-xl rounded-lg cursor-pointer hover:bg-opacity-80 transition-all duration-300 ease border-4 border-transparent answer-label hover:-translate-y-0.5 hover:shadow-lg"
-                    >
-                        {{ answer }}
-                    </label>
-                </div>
-                {% endfor %}
+    <div id="question-content" class="min-h-screen bg-light-blue">
+
+        <div class="bg-light-blue px-4 md:px-8 py-4 font-segoe text-warm-black text-lg">
+            Question {{ current_question_num }} of {{ total_questions }}
+        </div>
+        
+        <!-- QUESTION -->
+        <div class="bg-white px-4 md:px-8 py-8">
+            <h2 class="font-rockwell text-xl md:text-4xl font-bold text-warm-black leading-tight mb-8">{{ question_data.question }}</h2>
+        </div>
+        
+        <!-- ANSWER OPTIONS -->
+        <div class="bg-light-blue px-4 md:px-8 py-8">
+            <form id="answer-form">
+                <fieldset class="border-0 p-0 m-0">
+                    <legend class="sr-only">Choose your answer from the options below</legend>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-8 mb-8">
+                        {% for answer in question_data.answers %}
+                        <div class="flex items-center my-4 cursor-pointer">
+                            <input 
+                                type="radio" 
+                                name="answer" 
+                                value="{{ loop.index0 }}" 
+                                id="answer{{ loop.index0 }}" 
+                                class="mr-4 w-5 h-5 focus:outline-none focus:ring-2 focus:ring-yellow focus:ring-offset-2 answer-radio" 
+                                style="accent-color: var(--yellow);"
+                            >
+                            <label for="answer{{ loop.index0 }}" class="font-segoe text-warm-black text-lg cursor-pointer answer-label">{{ answer }}</label>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </fieldset>
             </form>
             
-            <!-- Current score display -->
-            <p id="score-display" class="font-segoe text-base md:text-lg text-warm-black mt-8">
-                Current score: {{ session.get('score', 0) }}/{{ current_question_num - 1 if current_question_num > 1 else 0 }}
+            <div class="text-right">
+                <a href="{{ url_for('home') }}" class="text-red font-segoe no-underline text-base hover:underline">&larr; Take me home</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- FEEDBACK OVERLAY -->
+    <div id="feedback-overlay" class="fixed inset-0 bg-black bg-opacity-50 backdrop-blur-sm flex items-center justify-center z-50 hidden transition-all duration-300 ease-out">
+        <div id="feedback-box" class="bg-light-blue border-4 border-yellow rounded-lg p-6 sm:p-8 mx-4 max-w-2xl text-center transform scale-0 transition-transform duration-500 ease-out shadow-2xl bounce-in">
+            <h3 id="feedback-message" class="font-rockwell text-xl sm:text-2xl md:text-3xl lg:text-4xl font-bold text-yellow leading-tight mb-4">
+            </h3>
+            <p id="score-update" class="font-segoe text-base md:text-lg text-warm-black">
+            </p>
+            <p class="font-segoe text-sm md:text-base text-warm-black mt-4 italic">
+                Loading next question...
             </p>
         </div>
     </div>
 
-        
-        <div class="text-right">
-            <a href="{{ url_for('home') }}" class="text-red font-segoe no-underline text-base hover:underline">&larr; Take me home</a>
-        </div>
-    </div>
-
     <script>
-        // JAVASCRIPT FOR ANSWERS AND DYNAMIC USER MESSAGE DISPLAY
+        // JAVASCRIPT FOR OVERLAY DISPLAY
+        // AI Disclosure: Used Claude Sonet 4 to create all JavaScript and AJAX to drive dynamic front-end display
         
-        // ELEMENTS
+        // important elements
         const form = document.getElementById('answer-form');
         const overlay = document.getElementById('feedback-overlay');
         const feedbackBox = document.getElementById('feedback-box');
@@ -68,20 +76,14 @@
         const answerRadios = document.querySelectorAll('.answer-radio');
         const answerLabels = document.querySelectorAll('.answer-label');
 
-        // CLICK STYLING
-        answerLabels.forEach(label => {
-            label.addEventListener('click', function() {
-                answerLabels.forEach(l => {
-                    l.classList.remove('border-red', 'bg-opacity-90', 'ring-4', 'ring-red', 'ring-opacity-20');
-                    l.classList.add('border-transparent');
-                });
-                this.classList.add('border-red', 'bg-opacity-90', 'ring-4', 'ring-red', 'ring-opacity-20');
-                this.classList.remove('border-transparent');
+        // radio button handling
+        answerRadios.forEach(radio => {
+            radio.addEventListener('change', function() {
                 submitAnswer();
             });
         });
 
-        // ANSWER PROCESSING    
+        // answer processing
         function submitAnswer() {
             const selectedAnswer = document.querySelector('input[name="answer"]:checked');
             if (!selectedAnswer) {
@@ -90,7 +92,6 @@
 
             answerRadios.forEach(radio => radio.disabled = true);
             answerLabels.forEach(label => {
-                label.classList.remove('hover:bg-opacity-80', 'cursor-pointer', 'hover:-translate-y-0.5', 'hover:shadow-lg');
                 label.classList.add('opacity-50', 'cursor-not-allowed');
             });
 
@@ -107,8 +108,8 @@
                     window.location.href = data.redirect;
                     return;
                 }
+
                 showFeedback(data);
-                
                 setTimeout(() => {
                     if (data.has_more_questions) {
                         window.location.reload();
@@ -120,17 +121,16 @@
             .catch(error => {
                 console.error('Error:', error);
                 alert('Something went wrong. Please try again.');
+                
                 answerRadios.forEach(radio => radio.disabled = false);
                 answerLabels.forEach(label => {
-                    label.classList.add('hover:bg-opacity-80', 'cursor-pointer', 'hover:-translate-y-0.5', 'hover:shadow-lg');
                     label.classList.remove('opacity-50', 'cursor-not-allowed');
                 });
             });
         }
 
-        // USER FEEDBACK MESSAGE OVERLAY
+        // user feedback overlay
         function showFeedback(data) {
-            
             feedbackMessage.innerHTML = data.feedback_message;
             scoreUpdate.textContent = `Current score: ${data.current_score}/${data.current_question_num}`;
             
