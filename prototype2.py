@@ -333,11 +333,11 @@ def results():
     if score == 13:
         final_score_message = f"Daaaaaaamn... you sure are smart!"
     elif 13 > score >= 10:
-        final_score_message = f"OK, we'll admit it: You are pretty smart. This time."
+        final_score_message = f"OK, we'll admit it: You are pretty smart. <br>This time."
     elif 10 > score >= 5:
-        final_score_message = f"Meh. You could've done better. Of course, you could have done worse. Consider yourself solidly average."
+        final_score_message = f"Meh. You could've done better. <br>Of course, you could have done worse. <br>Consider yourself solidly average."
     else:
-        final_score_message = f"Smart? Sorry, not this time. Perhaps trivia isn't your game?"
+        final_score_message = f"Smart? Sorry, not this time. <br>Perhaps trivia isn't your game?"
     
     return render_template("results.html",
                             final_score=score,
