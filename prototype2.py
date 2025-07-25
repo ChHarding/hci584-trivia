@@ -3,7 +3,7 @@
 # IMPORTS
 #
 
-from flask import Flask, render_template, request, redirect, url_for, session, flash 
+from flask import Flask, render_template, request, redirect, url_for, session, flash, jsonify 
 import html
 import random  
 import requests
@@ -159,12 +159,13 @@ def update_total_score(current_score, user_correct):
 # USER JOURNEY STEP 2.5 (BACKGROUND): USER FEEDBACK AFTER SUBMITTING ANSWER
 ##  in phase 2, may update this to display to currect answer as part of the message rather than a simple right/wrong message
 
-def user_feedback(result):
+def user_feedback(result, user_chosen_answer=None):
     """ This function provides a user feedback message after the user has answered a question, alerting them 
     whether they were correct or incorrect.
     
     Arguments:
-    - result from check_answer (True/False)
+    - result: from check_answer (True/False)
+    - user_chosen_answer: the text of the answer the user selected (for incorrect answers)
     
     Returns:
     - User messaging indicating whether the answer was correct or incorrect
@@ -174,7 +175,7 @@ def user_feedback(result):
     if result == True:
         return f"Woohoo! You are smart (and you've got the correct answers to prove it)."
     else:
-        return f"Smart? Not on this question. Your answer was wrong."
+        return f"Smart? Not on this question. <span class='text-red font-bold text-shadow-sm'>{user_chosen_answer}</span> is the wrong answer."
 
 # 
 # FLASK FUNCTIONS
