@@ -284,8 +284,14 @@ def answer():
     # updates score
     new_score = update_total_score(score, is_correct)
 
-    # grabs associated user feedback message
-    feedback_message = user_feedback(is_correct)
+    # pulls text from user's selected answer to use in incorrect answer feedback message
+    user_answer_text = current_question_data["answers"][user_answer]
+
+    # grabs associated feedback message
+    if is_correct:
+        feedback_message = user_feedback(is_correct) 
+    else:
+        feedback_message = user_feedback(is_correct, user_answer_text) 
     
     # calculate next question number
     next_question_num = current_num + 1
@@ -294,21 +300,18 @@ def answer():
     session["score"] = new_score
     session["current_question"] = next_question_num 
     
-    # auto-redirect to the correct next pages based on whether there are more questions left for the curret session 
-    # AI disclousure: used Claude Sonnet 4 to help with setting up automatic redirects
-    if next_question_num >= len(questions):
-        next_url = url_for("results")
-        redirect_message = "That's it! Let's see your final score..."
-    else:
-        next_url = url_for("show_question")
-        redirect_message = "Let's try a new question..."
+    # Return JSON response for the overlay
+    # AI disclousure: reflects addition of JSON required for JavaScript dynamic display derived from Claude Sonnet 4
+    response_data = {
+        "is_correct": is_correct,
+        "feedback_message": feedback_message,
+        "current_score": new_score,
+        "current_question_num": next_question_num,
+        "total_questions": len(questions),
+        "has_more_questions": next_question_num < len(questions)
+    }
     
-    return render_template("answer.html",
-                            feedback_message=feedback_message,
-                            current_score=new_score,
-                            current_question_num=next_question_num,
-                            redirect_message=redirect_message,
-                            next_url=next_url) 
+    return jsonify(response_data)
 
 # USER JOURNEY STEP 3: SEE FINAL RESULTS AT END OF GAME
 
