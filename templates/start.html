@@ -7,34 +7,72 @@
     <link rel="stylesheet" href="https://use.typekit.net/qcr5acn.css">
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
-    {% if not error %}
-    <script>
-        setTimeout(function() {
-            window.location.href = '{{ url_for("show_question") }}';
-        }, 3000);
-    </script>
-    {% endif %}
 </head>
 
 <body class="min-h-screen bg-light-blue">
-    <div class="flex flex-col justify-center items-center min-h-screen p-4 md:p-8 text-center">
-        <div class="max-w-3xl mx-auto text-center">
-
-            {% if error %}
-                <!-- ERROR -->
+    {% if error %}
+        <!-- ERROR STATE -->
+        <div class="flex flex-col justify-center items-center min-h-screen p-4 md:p-8 text-center">
+            <div class="max-w-3xl mx-auto text-center">
                 <h1 class="font-rockwell text-2xl md:text-4xl lg:text-5xl font-bold text-warm-black leading-tight mb-8">Uh oh! Something went wrong.</h1>
                 <p class="font-segoe text-base md:text-lg lg:text-xl text-warm-black leading-relaxed mb-4">We couldn't load the trivia questions right now. That's a bummer.</p>
                 <p class="font-segoe text-base md:text-lg lg:text-xl text-warm-black leading-relaxed mb-8">Try refreshing the page or come back in a few minutes.</p>
                 <a href="{{ url_for('home') }}" class="bg-yellow text-red font-rockwell font-bold rounded-lg no-underline inline-block transition-all duration-200 hover:-translate-y-0.5 hover:shadow-lg px-4 py-3 md:px-8 md:py-4 text-base md:text-lg">Go Back</a>
-            {% else %}
-                
-                <!-- SUCCESS -->
-                <h1 class="font-rockwell text-4xl md:text-6xl lg:text-7xl font-bold text-warm-black leading-tight mb-8">Time to prove your smarts!</h1>
-                <p class="font-segoe text-base md:text-lg lg:text-xl text-warm-black leading-relaxed mb-4">Think you're oh-so-smart, don't you? We'll see about that.</p>
-                <p class="italic text-yellow font-segoe text-xl">Get ready, get set&hellip;</p>
-            {% endif %}
-
+            </div>
         </div>
-    </div>
+        
+    {% else %}
+        <div class="min-h-screen flex flex-col md:flex-row">
+            <!-- COPY -->
+            <div class="w-full md:w-1/2 flex flex-col justify-center items-center p-4 md:p-8 text-center">
+                <div class="max-w-3xl mx-auto text-center">
+                    <h1 class="font-rockwell text-2xl md:text-4xl lg:text-5xl font-bold text-warm-black leading-tight mb-8">Time to prove your smarts!</h1>
+                    <p class="font-segoe text-base md:text-lg lg:text-xl text-warm-black leading-relaxed mb-4">Think you're oh-so-smart, don't you? We'll see about that.</p>
+                    <p class="italic text-yellow font-segoe text-xl">Get ready, get set&hellip;</p>
+                </div>
+            </div>
+            
+            <!-- COUNTDOWN -->
+            <div class="w-full md:w-1/2 flex flex-col justify-center items-center p-4 md:p-8">
+                <div id="countdown-display" class="font-rockwell text-8xl md:text-9xl font-bold text-yellow countdown-flash mb-4">
+                    3
+                </div>
+                <p class="font-segoe text-lg md:text-xl text-warm-black text-center">
+                    Starting in...
+                </p>
+            </div>
+        </div>
+
+        <script>
+            let countdown = 3;
+            const countdownDisplay = document.getElementById('countdown-display');
+            
+            // COUNTDOWN ANIMATION
+            function updateCountdown() {
+                
+                countdownDisplay.classList.remove('countdown-flash');
+                
+                setTimeout(() => {
+                    countdownDisplay.classList.add('countdown-flash');
+                    countdownDisplay.textContent = countdown;
+                    
+                    countdown--;
+                    
+                    if (countdown < 0) {
+                        countdownDisplay.textContent = 'GO!';
+                        countdownDisplay.classList.add('countdown-flash');
+                        
+                        setTimeout(() => {
+                            window.location.href = '{{ url_for("show_question") }}';
+                        }, 500);
+                    } else {
+                        setTimeout(updateCountdown, 1000);
+                    }
+                }, 50);
+            }
+            
+            setTimeout(updateCountdown, 1000);
+        </script>
+    {% endif %}
 </body>
 </html>
