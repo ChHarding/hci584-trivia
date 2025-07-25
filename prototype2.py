@@ -328,7 +328,7 @@ def results():
     # get the final number of correct answers and use that to calculate a percent-based final score
     questions = session.get("questions", [])
     score = session.get("score", 0)
-    score_percentage = round(score / len(questions) * 100)
+    score_percentage = round(score / len(questions)) * 100
 
     # final user score message on results page is based on the number of answers the user guessed correctly
     if score_percentage == 100:
