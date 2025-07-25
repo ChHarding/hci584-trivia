@@ -44,3 +44,15 @@
 .text-red {
   color: var(--red);
 }
+
+/* CUSTOM ANIMATIONS AND EFFECTS FOR JS ELEMENTS */
+
+/* Custom bounce-in animation timing for user answer messages */
+.bounce-in {
+  animation-timing-function: cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+/* Text shadow for user answer messages */
+.text-shadow-sm {
+  text-shadow: 1px 1px 2px #231f20;
+}
