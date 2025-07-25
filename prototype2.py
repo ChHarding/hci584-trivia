@@ -175,7 +175,7 @@ def user_feedback(result, user_chosen_answer=None):
     if result == True:
         return f"Woohoo! You are smart (and you've got the correct answers to prove it)."
     else:
-        return f"Smart? Not on this question. <span class='text-red font-bold text-shadow-sm'>{user_chosen_answer}</span> is the wrong answer."
+        return f"Smart? Not on this question. <br><span class='text-red font-bold text-shadow-sm'>{user_chosen_answer}</span> is the wrong answer."
 
 # 
 # FLASK FUNCTIONS
