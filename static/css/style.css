@@ -45,9 +45,37 @@
   color: var(--red);
 }
 
+.border-red {
+  border-color: var(--red);
+}
+
+.bg-warm-black {
+  background-color: var(--warm-black);
+}
+
 /* CUSTOM ANIMATIONS AND EFFECTS FOR JS ELEMENTS */
 
-/* Custom bounce-in animation timing for user answer messages */
+/* countdown clock */
+.countdown-flash {
+  animation: flashScale 0.8s ease-out;
+}
+
+@keyframes flashScale {
+  0% {
+    transform: scale(0.8);
+    opacity: 0.5;
+  }
+  50% {
+    transform: scale(1.2);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+/* user answer message overlay */
 .bounce-in {
   animation-timing-function: cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
