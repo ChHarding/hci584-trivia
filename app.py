@@ -108,7 +108,7 @@ def clean_up_questions(all_raw_questions):
         random.shuffle(answers)
         correct_index = answers.index(cleaned_correct_answer)
         
-        # documents final cleaned-up questions, saves question, answers, and correct index fields to questions dictionary
+        # documents final cleaned-up questions, saves question, answers, and correct index fields to questions list
         cleaned_question = {
             "question": question,
             "answers": answers,
@@ -122,11 +122,11 @@ def clean_up_questions(all_raw_questions):
 # USER JOURNEY STEP 2.3 (BACKGROUND): CHECK IF SUBMITTED ANSWER IS CORRECT
 
 def check_answer(user_answer_index, question_data):
-    """ This function checks if the answer the user submitted matches the correct answer from the API data.
+    """ This function checks if the answer input my the user matches the correct, cleaned-up answer using the index values.
     
     Arguments:
     - user_answer_index: the index of the answer the user selected
-    - question_data: list containing current question's info including correct_index
+    - question_data: question data derived from clean_up_questions() containing current question's correct_index
     
     Returns:
     - True if answer's answer matches the correct answer index
