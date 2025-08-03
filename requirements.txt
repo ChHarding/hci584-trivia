@@ -1,0 +1,6 @@
+# required prerequisites for Web-Based-Single-Player-Trivia-Game
+# to install them, type this into your console:
+# pip -r requirements.txt 
+
+flask>=3.1.0
+requests>=2.32.3
