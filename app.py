@@ -5,7 +5,7 @@
 # IMPORTS
 #
 
-from flask import Flask, render_template, request, redirect, url_for, session, flash, jsonify 
+from flask import Flask, render_template, request, redirect, url_for, session, jsonify 
 import html
 import random  
 import requests
