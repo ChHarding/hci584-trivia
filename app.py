@@ -170,7 +170,7 @@ def user_feedback(result, user_chosen_answer=None):
     """ This function provides a user feedback message after each answered question, alerting them 
     whether they were correct or incorrect. Indicates which answer they selected as part of the feedback. 
     Includes basic HTML/CSS formatting (line break; font color and weight via Tailwind CSS), which will 
-    need to be updated if Flask questions() page template styling is updated.
+    need to be updated if Flask show_question() page template styling is updated.
     
     Arguments:
     - result: from check_answer (True/False)
@@ -260,14 +260,23 @@ def show_question():
 
 @app.route('/answer', methods=['POST'])
 def answer():
-    """ This function processes the user's selected answer from the form on '/quetion' using the check_answer game 
-        logic function. It then displays a user message based on results and automatically redirects the user to
-        the next question.
+    """ This function processes the user's answer input from the form on the '/question' template using 
+        check_answer(). It then displays a user message based on results and automatically redirects the 
+        user to the next question. While this is the most complex Flask route and operation within the app, 
+        it does not render a separate '/answer' template, but instead returns data that is used for a
+        feedback overlay on '/question'.
         
         Returns:
-        - '/answer', an intermediary page with a user message that redirects to the next question after 3 seconds"""
+        - JSON data including:
+        -- True/False whether the answer is correct
+        -- User feedback message text
+        -- Updated score
+        -- Question number
+        -- Total number of questions
+        -- True/False whether the game has more questions
+        """
     
-    # user's answer based on radio button selected on '/question'
+    # user's answer for current question based on '/question' form input
     user_answer = int(request.form.get("answer", -1))
     
     # establishes the number of current question, the question data, and score for the current game session   
@@ -275,14 +284,14 @@ def answer():
     questions = session.get("questions", [])
     score = session.get("score", 0)
 
-    # if there are no more questions, redirects to '/results' page instead of the question page
+    # if there are no more questions, redirects to '/results' page instead of the '/question
     if current_num >= len(questions):
         return redirect(url_for("results"))
     
-    # gets info about the current question (based on question number)
+    # gets info about the current question
     current_question_data = questions[current_num]
 
-    # determine if user's answer is current question correct
+    # determine if user's answer is correct
     is_correct = check_answer(user_answer, current_question_data)
 
     # updates score
@@ -304,8 +313,7 @@ def answer():
     session["score"] = new_score
     session["current_question"] = next_question_num 
     
-    # Return JSON response for the overlay
-    # AI disclousure: reflects addition of JSON required for JavaScript dynamic display derived from Claude Sonnet 4
+    # return JSON response for the overlay
     response_data = {
         "is_correct": is_correct,
         "feedback_message": feedback_message,
