@@ -205,20 +205,18 @@ def home():
 
 @app.route('/start')
 def start():
-    # possible phase 2 augmentation: show dynamic countdown clock
-    """ This function launches the actual game after user input on homepage.
+    """ This function launches the game after user input on homepage.
         
         Returns:
         - Game '/start' sequence
         - First question '/question' page (delayed autodirect)
         """
 
-    # runs first two game engine functions to pull questions from the API and get them cleaned and ready to display
+    # runs first two game engine functions to pull questions from the API and clean them up
     raw_questions = get_questions()
     questions = clean_up_questions(raw_questions)
 
-    # error handling
-    # AI disclosure: added this from Claude during troubleshooting
+    # error handling if questions do not load; error message in HTML template
     if not questions:
         return render_template('start.html', error=True)
 
