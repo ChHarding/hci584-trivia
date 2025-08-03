@@ -66,10 +66,11 @@ def get_questions():
 # USER JOURNEY STEP 2.2 (BACKGROUND): CLEAN QUESTION AND ANSWER DATA FROM API
 
 def clean_up_questions(all_raw_questions):
-    """ This function takes the raw data from the API and makes it presentable for human game play. This includes
-    updating HTML character codes so they are readable by humans (e.g., changing &#039; to ' or &quot; to ") and 
-    and randomizing the answer order so that the correct answer is not always in the same list location. Returns
-    the cleaned up questions, the cleaned up answer, and the location of the correct answer for ALL questions. 
+    """ This function takes the raw data from the Open Trivia Database API and makes it presentable for human 
+    game play. This includes updating HTML character codes so they are readable by humans (e.g., changing 
+    &#039; to ' or &quot; to ") and randomizing the answer order so that the correct answer is not always 
+    in the same list location (i.e., the correct answer is not always in position 1). Returns the cleaned up 
+    questions, the cleaned up answer, and the location of the correct answer for ALL questions. 
         
     Arguments:
     - all_raw_questions: questions retrieved from API via get_questions
@@ -78,7 +79,7 @@ def clean_up_questions(all_raw_questions):
     - list of cleaned question and answer data
     """
     
-    # if the function get_questions does pull in any questions, stops the function as there's no data to clean up
+    # if the function get_questions() fails to pull in any questions, the loop stops as there's no data to clean up
     if not all_raw_questions:
         return None
     
@@ -96,18 +97,18 @@ def clean_up_questions(all_raw_questions):
         # create list to hold all the cleaned-up answer data for a each question
         answers = []
 
-        # for each of the answer options, clean up special HTML characters
+        # for each of the answer options, clean up special HTML characters so they're human readable
         for a in raw_answers:
             cleaned_answers = html.unescape(a)
             answers.append(cleaned_answers)
         cleaned_correct_answer = html.unescape(question_details["correct_answer"])
         
-        # random shuffle all the cleaned-up answer options so the correct answers are not predictable, then make
-        #  a note of the index for the correct answer for that specific question so it can be used to grade user results
+        # random shuffle all the cleaned-up answer options so the correct answers are not predictable, then make a note
+        # of the index for the correct answer for that specific question so it can be used to grade user answer input
         random.shuffle(answers)
         correct_index = answers.index(cleaned_correct_answer)
         
-        # documents final cleaned-up questions, saves question, answers, and correct index fields to questions list
+        # documents final cleaned-up questions, saves question, answers, and correct index fields to questions dictionary
         cleaned_question = {
             "question": question,
             "answers": answers,
