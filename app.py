@@ -189,11 +189,6 @@ def user_feedback(result, user_chosen_answer=None):
 # 
 # FLASK FUNCTIONS
 #
-""" Includes all the Flask routes and basic HTML - will update with separate HTML/CSS/JS files as needed 
-    in phase 2 once the basic app structure is built and tested
-    
-    AI disclosure: Used Claude Sonnet 4 to generate HTML and JavaScript for Flask routes, as well as for 
-    troubleshooting and debugging."""
 
 # USER JOURNEY STEP 1: VISIT HOMEPAGE, LAUNCH GAME
 @app.route('/')
