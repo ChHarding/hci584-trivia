@@ -362,9 +362,8 @@ def results():
 # 
 # RUN APP
 #
-""" Includes final code to make this bad boy run"""
 
-
+# NOTE: if deploying on a public server, delete print() lines, plus debug=True argument from app.run() call
 if __name__ == "__main__":
     print("Starting app...")
     print("Local homepage for testing: http://127.0.0.1:5000")
