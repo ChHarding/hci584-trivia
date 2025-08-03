@@ -342,14 +342,14 @@ def results():
     # get the final number of correct answers and use that to calculate a percent-based final score
     questions = session.get("questions", [])
     score = session.get("score", 0)
-    score_percentage = round(score / len(questions)) * 100
+    score_percentage = round((score / len(questions)) * 100)
 
     # final user score message based on percentage of total answered correctly
     if score_percentage == 100:
         final_score_message = f"Daaaaaaamn... you sure are smart!"
-    elif 100 > score >= 75:
+    elif 100 > score_percentage >= 75:
         final_score_message = f"OK, we'll admit it: You are pretty smart. <br>This time."
-    elif 75 > score >= 50:
+    elif 75 > score_percentage >= 50:
         final_score_message = f"Meh. You could've done better. <br>Of course, you could have done worse. <br>Consider yourself solidly average."
     else:
         final_score_message = f"Smart? Sorry, not this time. <br>Perhaps trivia isn't your game?"
