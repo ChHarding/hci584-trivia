@@ -330,19 +330,21 @@ def answer():
 @app.route('/results')
 def results():
     """ This function displays the final score at the end of the game. Both the raw (number of questions 
-        answered coreectly) and the percentage (answered correctly out of the total number of questions) is show. 
-        Also shows a final message based on the number of questions the user got correct. User has the option to 
+        answered coreectly) and the percentage (answered correctly out of the total number of questions) is shown. 
+        Also shows a final message based percentage of questions the user answered correctly. User has the option to 
         return to the homepage and start a new game.
     
         Returns:
-        - '/results' page at the end of the game."""
+        - '/results' page template
+        - Number of questions answered correctly, score percentage, and user message for personalization
+        """
     
     # get the final number of correct answers and use that to calculate a percent-based final score
     questions = session.get("questions", [])
     score = session.get("score", 0)
     score_percentage = round(score / len(questions)) * 100
 
-    # final user score message on results page is based on the number of answers the user guessed correctly
+    # final user score message based on percentage of total answered correctly
     if score_percentage == 100:
         final_score_message = f"Daaaaaaamn... you sure are smart!"
     elif 100 > score >= 75:
