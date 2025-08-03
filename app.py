@@ -231,24 +231,26 @@ def start():
 
 @app.route('/question')
 def show_question():
-    """ This function shows the cleaned up questions and available answer options to the user. In addition, the user 
-        can see which question they are on (i.e., Question X of Y). The user selects an answer from a 
-        list of radio buttons. The answer is automatically submitted once a radio button is active; there 
-        is no separate submit button.
+    """ This function shows the cleaned up questions and available answer options to the user. In addition,  
+        displays which question user is currently on (i.e., Question X of Y). The user selects an answer, which 
+        is immediately processed on input.
         
         Returns:
         - Main game play '/questions' page
+        - Current question data
+        - Curent question number
+        - Total number of questions in the game
         """
     
-    # establishes the number of current question and the question data for the current game session  
+    # establishes the number of the current question and the corresponding question data  
     current_num = session.get("current_question", 0)
     questions = session.get("questions", [])
 
-    # Displays special message if there are no more questions to answer
+    # displays special message if there are no more questions to answer
     if current_num >= len(questions):
-        return "That's it. You're answered them all. There're no more questions. Zip, Zero. Zilch. Nada. "
+        return "That's it. You're answered them all. There're no more questions. Zip, Zero. Zilch. Nada."
 
-    # Pulls the data for the current question number so it can be displayed on the page
+    # pulls the data for the current question number so it can be displayed on the page
     question_data = questions[current_num]
 
     return render_template("question.html",
