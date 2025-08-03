@@ -16,6 +16,8 @@ import requests
 """ Standard code to make the app work"""
 
 app = Flask(__name__)
+
+# NOTE: if deploying on a public server, update to a unique value; not needed for local use
 app.secret_key = "placeholder-secret-key-for-version1_hci584-june-2025"
 
 # 
@@ -28,10 +30,13 @@ app.secret_key = "placeholder-secret-key-for-version1_hci584-june-2025"
 # USER JOURNEY STEP 2.1 (BACKGROUND): GET QUESTIONS FROM OPEN TRIVIA DATABASE
 
 def get_questions():
-    """ This function calls the Open Trivia Database (https://opentdb.com/api_config.php) API to retrieve the trivia 
-    questions and converts it into json format. Each game has a baker's dozen (13) of multiple choice questions. 
-    If the app encounters an error loading the questions, gives user an error message to try restarting 
-    the game (error message listed in Flask functions for user journey step 2).
+    """ This function calls the Open Trivia Database API to retrieve the trivia 
+    questions and converts it into JSON format. Each game consists of randomized, multiple choice questions. If the 
+    app encounters an error loading the questions, gives user an error message to try restarting the game (error 
+    message listed in Flask functions for user journey step 2).
+
+    The OTD API does not require an API key for use. To change the category, quantity of questions, or difficulty level,
+    visit the API configuration page (https://opentdb.com/api_config.php) to retrieve a new URL.
 
     Data returned includes:
     - response_code
@@ -46,7 +51,7 @@ def get_questions():
     No arguments
     """
 
-    url = f"https://opentdb.com/api.php?amount=13&category=9&difficulty=medium&type=multiple"
+    url = f"https://opentdb.com/api.php?amount=13&difficulty=hard&type=multiple"
     try:
         response = requests.get(url)
         data = response.json()
