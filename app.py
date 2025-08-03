@@ -146,19 +146,19 @@ def check_answer(user_answer_index, question_data):
 # USER JOURNEY STEP 2.4 (BACKGROUND): UPDATE RUNNING SCORE AFTER ANSWER CHECKED
 
 def update_total_score(current_score, user_correct):
-    """ This function updates the user's running total score for the game thus far based on whether their
-    answer to the previous question was correct or incorrect. It uses the check_answer function to determine
+    """ This function updates the user's running total score for the current game based on whether their
+    answer to the current question is correct or incorrect. It uses check_answer() to determine
     if the user had a correct (True) answer or incorrect (False) answer.
     
     Arguments:
     - current_score: the user's current score (i.e., prior to the question just answered)
-    - user_correct: True/False if the answer was right as determined by check_answer function
+    - user_correct: True/False if the answer was right as determined by check_answer() function
     
     Returns:
     - updated score (current_score + 1 if correct, no change if incorrect)
     """
 
-    # uses check_answer and current score to determine new score
+    # uses check_answer() and current score to determine new score
     if user_correct == True:
         return current_score + 1
     else:
