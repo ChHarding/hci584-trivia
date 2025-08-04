@@ -64,7 +64,7 @@ If `python` doesn’t work, try `python3`.
 
 Please check your web host’s documentation for specific deployment instructions, including whether you need to install the latest Flask and Requests libraries separately. 
 
-You must load `app.py` plus the associated `templates/` and `static/css/style.css` for the app to run.
+You must load `app.py` plus the associated `templates/` and `static/css/style.css` files for the app to run.
 
 ### ***Style considerations: Tailwind***
 
