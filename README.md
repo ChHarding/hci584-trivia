@@ -74,7 +74,7 @@ Beyond the custom colors, fonts, and JavaScript effects found in `style.css`, **
 
 The two primary fonts used within the app are Rockwell and Segoe UI. The latter is a standard font that comes with Windows and Microsoft Office. Both [Rockwell](https://fonts.adobe.com/fonts/rockwell) and [Segoe UI](https://fonts.adobe.com/fonts/segoe-ui) are also available as web fonts through Adobe Fonts and MyFonts. 
 
-When installing the app, you will need to replace the current TypeKit placeholder `@import` link at the top of the `style.css` file and in the head section of each of the HTML templates. Otherwise, the specified fallback fonts will be loaded. 
+When installing the app, you will need to replace the current TypeKit placeholder `@import` link at the top of the `style.css` file and in the `<head>` section of each of the HTML templates. Otherwise, the specified fallback fonts will be loaded. 
 
 ## **Game Play Basics**
 
