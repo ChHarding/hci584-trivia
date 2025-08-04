@@ -21,7 +21,7 @@ This app was originally built as a student project for Iowa State University’s
 │   └── results.html                # end results summary page
 ├── static/
 │   └── css/
-│       └── style.css               # custom styling (otherwise Tailwind)
+│       └── style.css               # custom styling (otherwise Tailwind 4.1)
 ├── _docs/                          # reference docs
 │   └── dev-guide.md                # developer's guide
 ├── _img/                           # reference images (not required to run app)
