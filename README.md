@@ -1,7 +1,11 @@
-![Hello, Smarty Pants: a simple, single-player trivia game web app powered by Python Flask](img/Hello-Smarty-Pants-User-Guide.png)
+![Hello, Smarty Pants: a simple, single-player trivia game web app powered by Python Flask](_img/Hello-Smarty-Pants-User-Guide.png)
 
-| Hello, Smarty Pants is a single-player trivia game web app powered by Python Flask. It uses the Open Trivia Database API to supply questions and associated answers. From the player perspective, it features a simple flow: start, play, see results.  You can test play the deployed prototype at [https://joellenroberts.pythonanywhere.com](https://joellenroberts.pythonanywhere.com) This app was originally built as a student project for Iowa State University’s HCI 5840 course in summer 2025\. |
-| :---- |
+## **Overview**
+**Hello, Smarty Pants** is a single-player trivia game web app powered by Python Flask. It uses the Open Trivia Database API to supply questions and associated answers. 
+
+From the player perspective, it features a simple flow: start, play, see results.  You can test play the deployed prototype at [https://joellenroberts.pythonanywhere.com](https://joellenroberts.pythonanywhere.com) 
+
+This app was originally built as a student project for Iowa State University’s HCI 5840 course in summer 2025.
 
 ## **Project Files**
 
@@ -17,7 +21,7 @@
 │   └── results.html                # end results summary page
 ├── static/
 │   └── css/
-│       └── style.css               # custom styling (otherwise Tailwind)
+│       └── style.css               # custom styling (otherwise Tailwind 4.1)
 ├── _docs/                          # reference docs
 │   └── dev-guide.md                # developer's guide
 ├── _img/                           # reference images (not required to run app)
@@ -60,7 +64,7 @@ If `python` doesn’t work, try `python3`.
 
 Please check your web host’s documentation for specific deployment instructions, including whether you need to install the latest Flask and Requests libraries separately. 
 
-You must load `app.py` plus the associated `templates/` and `static/css/style.css` for the app to run.
+You must load `app.py` plus the associated `templates/` and `static/css/style.css` files for the app to run.
 
 ### ***Style considerations: Tailwind***
 
@@ -78,7 +82,7 @@ When installing the app, you will need to replace the current TypeKit placeholde
 
 The potential player visits the app homepage and selects the button to start the game, which launches the countdown clock.
 
-![Hello, Smarty Pants: Start Game](img/Hello-Smarty-Pants-Start-Game.gif)
+![Hello, Smarty Pants: Start Game](_img/Hello-Smarty-Pants-Start-Game.gif)
 
 ### ***User Flow Step 2: Play Game***
 
@@ -86,10 +90,10 @@ Now the game play officially begins. Player sees the first question and four ans
 
 The answer is processed as soon as it’s selected. If the player guessed right, they get a “correct” user feedback message via pop-up overlay. If the guess is wrong, the player gets an “incorrect” feedback message. The score is updated and the next question loads automatically.
 
-![Hello, Smarty Pants: Play Game](img/Hello-Smarty-Pants-Play-Game.gif)
+![Hello, Smarty Pants: Play Game](_img/Hello-Smarty-Pants-Play-Game.gif)
 
 ### ***User Flow Step 3: View Results***
 
 Once the player answers all 13 questions, they sees a final results page with their score and one of four use feedback messages based on the percentage of questions they answered correctly. From here, they can choose to return to the beginning and start a new game.
 
-![Hello, Smarty Pants: Final Results](img/Hello-Smarty-Pants-Results.png)
+![Hello, Smarty Pants: Final Results](_img/Hello-Smarty-Pants-Results.png)
