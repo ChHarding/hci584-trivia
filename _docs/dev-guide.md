@@ -199,9 +199,12 @@ After a few seconds, the `/question` page is reloaded with a new question and th
 ### ***User Flow Step 3: View Results***
 After the user answers all questions, they are automatically redirected to the `/results` page where `@app.route('/results')` renders the final `session` score as both a total number of correct answers and the percentage of all questions. Based on the percentage score, the app shows one of four user messages.
 
+## **TLDR**
+**Hello, Smarty Pants** is simple trivia game with questions retrieved via the Open Trivia Database API and powered by Python `Flask`. It depends heavily on `Flask session` functions for game functions and JavaScript for front-end messaging display and animations. Custom functions pull questions from the API, clean them up for human readability, grade answers, update scores, an determine appropriate user feedback messages. It features a total of five `Flask` routes and four HTML templates.
+
 ## **Possible Enhancements and Variations**
 
-While *Hello, Smarty Pants* is designed to be a simple, straightforward application, there are a number of ways it could be enhanced.
+While **Hello, Smarty Pants** is designed to be a simple, straightforward application, there are a number of ways it could be enhanced.
 
 - Adding the option to allow users to specify game attributes like number of questions, topic, or question difficulty; this could be acheived by dynamically building the API URL to include specific parameter values
 - Adding an additional, alternative game at an easier level of difficulting and showing it as an option on the `/results` page to people who score below a certain threshold
