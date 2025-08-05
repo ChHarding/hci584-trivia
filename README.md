@@ -49,7 +49,7 @@ All other modules used are part of the Python standard library.
 
 3\. Run the main program file.  
 ```
-python trivia_game.py
+python app.py
 ```
 
 If `python` doesn’t work, try `python3`.
@@ -70,13 +70,14 @@ Beyond the custom colors, fonts, and JavaScript effects found in `style.css`, **
 
 The two primary fonts used within the app are Rockwell and Segoe UI. The latter is a standard font that comes with Windows and Microsoft Office. Both [Rockwell](https://fonts.adobe.com/fonts/rockwell) and [Segoe UI](https://fonts.adobe.com/fonts/segoe-ui) are also available as web fonts through Adobe Fonts and MyFonts. 
 
-When installing the app, you will need to replace the current TypeKit placeholder `@import` link at the top of the `style.css` file and in the head section of each of the HTML templates. Otherwise, the specified fallback fonts will be loaded. 
+When installing the app, you will need to replace the current TypeKit placeholder `@import` link at the top of the `style.css` file and in the `<head>` section of each of the HTML templates. Otherwise, the specified fallback fonts will be loaded. 
 
 ## **Game Play Basics**
 
 ### ***User Flow Step 1: Start Game***
 
 The potential player visits the app homepage and selects the button to start the game, which launches the countdown clock.
+
 ![Hello, Smarty Pants: Start Game](img/Hello-Smarty-Pants-Start-Game.gif)
 
 ### ***User Flow Step 2: Play Game***
@@ -84,9 +85,11 @@ The potential player visits the app homepage and selects the button to start the
 Now the game play officially begins. Player sees the first question and four answer choices. The player selects their answer by radio button—no second submit button action required. Easy? Peasy.
 
 The answer is processed as soon as it’s selected. If the player guessed right, they get a “correct” user feedback message via pop-up overlay. If the guess is wrong, the player gets an “incorrect” feedback message. The score is updated and the next question loads automatically.
+
 ![Hello, Smarty Pants: Play Game](img/Hello-Smarty-Pants-Play-Game.gif)
 
 ### ***User Flow Step 3: View Results***
 
 Once the player answers all 13 questions, they sees a final results page with their score and one of four use feedback messages based on the percentage of questions they answered correctly. From here, they can choose to return to the beginning and start a new game.
+
 ![Hello, Smarty Pants: Final Results](img/Hello-Smarty-Pants-Results.png)
