@@ -145,13 +145,13 @@ If `python` doesn’t work, try `python3`.
 
 A user visits the trivia game web app using a desktop or mobile browser. On the homepage, they see a welcome message and a button that let's them launch a single player, 13-question general knowledge trivia game. They press the button to play. 
 
-![Hello, Smarty Pants: Start Game](_img/Hello-Smarty-Pants-Start-Game.gif)
+![Hello, Smarty Pants: Start Game](/_img/Hello-Smarty-Pants-Start-Game.gif)
 
 ### ***User Flow Step 2: Play Game***
 
 Now the game play officially begins. Player sees the first question and four answer choices. The player selects their answer by radio button, after which they see a user feedback message about whether they were correct or incorrect via a pop-up overlay: If the player guessed right, they get a “correct” message; if the guess is wrong, the player gets an “incorrect” message, indicating which answer they selected. They can also see their cumulative score. 
 
-![Hello, Smarty Pants: Play Game](_img/Hello-Smarty-Pants-Play-Game.gif)
+![Hello, Smarty Pants: Play Game](/_img/Hello-Smarty-Pants-Play-Game.gif)
 
 They are then automatically taken to the next question and follow the same process until they complete all 13 questions. 
 
@@ -159,7 +159,7 @@ They are then automatically taken to the next question and follow the same proce
 
 Once the player answers all 13 questions, they are redirected to a page that displays the final results as a raw number of questions answered correctly and as a percentage of the whole, plus one of four use feedback messages based on the percentage of questions they answered correctly. 
 
-![Hello, Smarty Pants: Final Results](_img/Hello-Smarty-Pants-Results.png)
+![Hello, Smarty Pants: Final Results](/_img/Hello-Smarty-Pants-Results.png)
 
 From here, they can choose to return to the beginning and start a new game.
 
