@@ -1,4 +1,4 @@
-![Hello, Smarty Pants: a simple, single-player trivia game web app powered by Python Flask](_img/Hello-Smarty-Pants-Dev-Guide.png)
+![Hello, Smarty Pants: a simple, single-player trivia game web app powered by Python Flask](/_img/Hello-Smarty-Pants-Dev-Guide.png)
 
 ## **Overview**
 **Hello, Smarty Pants** is a simple, browser-based web application that allows individual users to play a self-serve, multiple-choice trivia game. It uses Flask 3.1.0 as the web framework, Tailwind 4.1 for styling, and the [Open Trivia Database] (https://opentdb.com/api_config.php) API as the question engine. 
