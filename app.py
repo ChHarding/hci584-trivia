@@ -18,7 +18,7 @@ import requests
 app = Flask(__name__)
 
 # NOTE: if deploying on a public server, update to a unique value; not needed for local use
-app.secret_key = "placeholder-secret-key-for-version1_hci584-june-2025"
+app.secret_key = "placeholder-secret-key"
 
 # 
 # GAME ENGINE FUNCTIONS
